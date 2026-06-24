@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+
+# Local debug / run output
+run_summary.txt
+matching_lines.txt
+smoke.txt
+scripts/debug_out.txt
+_probe.py
+_diag_inline.py
+
+# OS
+.DS_Store
+Thumbs.db

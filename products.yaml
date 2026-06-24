@@ -1,0 +1,50 @@
+# Search by product name across Fressnapf, Zooplus, and Zooroyal.
+# The tracker finds the right pack size and alerts when price hits your target.
+
+products:
+  - name: "Royal Canin Instinctive in Soße"
+    pet: "Cats"
+    search_query: "Royal Canin Instinctive in Soße"
+    pack_size: "12x85g"
+    target_price: 15.00
+    retailer_urls:
+      zooroyal: "https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/"
+  - name: "Feringa Classic Meat Menü"
+    pet: "Cats"
+    search_query: "Feringa Classic Meat Menü"
+    pack_size: "12x400g"
+    target_price: 20.00
+  - name: "Feringa Classic Meat Menü"
+    pet: "Cats"
+    search_query: "Feringa Classic Meat Menü"
+    pack_size: "24x400g"
+    target_price: 40.00
+  - name: "Royal Canin Instinctive +7 in Soße"
+    pet: "Cats"
+    search_query: "Royal Canin Instinctive 7+ in Soße"
+    pack_size: "12x85g"
+    target_price: 15.00
+    retailer_urls:
+      zooroyal: "https://www.zooroyal.de/p/royal-canin-instinctive-7-nassfutter-in-sosse-fuer-aeltere-katzen-12x85g/1000076863/"
+  - name: "Cosma Asia in Jelly"
+    pet: "Cats"
+    search_query: "Cosma Asia in Jelly"
+    pack_size: "12x400g"
+    target_price: 15.00
+  - name: "PREMIERE Meati Nassfutter Hund"
+    pet: "Dogs"
+    search_query: "PREMIERE Meati Nassfutter Hund"
+    pack_size: "6x800g"
+    target_price: 15.00
+    retailers:
+      - fressnapf
+      - zooplus
+      - zooroyal
+
+  # More examples:
+  # - name: "Senior cat food"
+  #   pet: "Senior cat"
+  #   search_query: "Royal Canin Ageing 12+"
+  #   pack_size: "2kg"
+  #   target_price: 42.00
+  #   min_discount_pct: 10   # optional: also alert on % drop from baseline
