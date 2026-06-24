@@ -19,7 +19,7 @@ products:
     search_query: "Feringa Classic Meat Menü"
     pack_size: "24x400g"
     target_price: 40.00
-  - name: "Royal Canin Instinctive +7 in Soße"
+  - name: "Royal Canin Instinctive 7+ in Soße"
     pet: "Cats"
     search_query: "Royal Canin Instinctive 7+ in Soße"
     pack_size: "12x85g"
@@ -36,6 +36,16 @@ products:
     search_query: "PREMIERE Meati Nassfutter Hund"
     pack_size: "6x800g"
     target_price: 15.00
+  - name: "PREMIERE Excellent Klumpstreu Katze 12 kg"
+    pet: "Cats"
+    search_query: "PREMIERE Excellent Klumpstreu Katze 12 kg"
+    pack_size: "12kg"
+    target_price: 14.00
+  - name: "PREMIERE Carbon Control Multi-Cat Klumpstreu Katze 12 l"
+    pet: "Cats"
+    search_query: "PREMIERE Carbon Control Multi-Cat Klumpstreu Katze 12 l"
+    pack_size: "12l"
+    target_price: 16.00
     retailers:
       - fressnapf
       - zooplus
@@ -48,3 +58,4 @@ products:
   #   pack_size: "2kg"
   #   target_price: 42.00
   #   min_discount_pct: 10   # optional: also alert on % drop from baseline
+
