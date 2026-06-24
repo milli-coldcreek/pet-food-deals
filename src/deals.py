@@ -5,6 +5,23 @@ from typing import Any, Dict, List, Optional, Tuple
 from .models import DealAlert, PriceResult, ProductWatch
 from .pricing import format_unit_price, target_unit_price, unit_pricing_from_texts
 
+# Ignore single-check drops steeper than this — usually a scrape mismatch.
+MAX_TRUSTED_DROP_PCT = 35.0
+
+
+def _trusted_price_drop(baseline: Optional[float], price: float) -> bool:
+    if baseline is None or baseline <= 0 or price >= baseline:
+        return True
+    drop_pct = (baseline - price) / baseline * 100
+    return drop_pct <= MAX_TRUSTED_DROP_PCT
+
+
+def _trusted_unit_drop(baseline_unit: Optional[float], unit_price: float) -> bool:
+    if baseline_unit is None or baseline_unit <= 0 or unit_price >= baseline_unit:
+        return True
+    drop_pct = (baseline_unit - unit_price) / baseline_unit * 100
+    return drop_pct <= MAX_TRUSTED_DROP_PCT
+
 
 def _listing_unit(price: PriceResult) -> Optional[tuple[float, str]]:
     unit = unit_pricing_from_texts(price.price, price.name, price.url)
@@ -50,11 +67,15 @@ def evaluate_deal(
     product: ProductWatch,
     price: PriceResult,
     product_state: Dict[str, Any],
+    *,
+    force_alert: bool = False,
 ) -> Tuple[Optional[DealAlert], float, Optional[float]]:
     """Return (alert_or_none, new_baseline, alert_price_if_sent)."""
     baseline = product_state.get("baseline_price")
     baseline_unit = product_state.get("baseline_unit_price")
-    last_alert_price = product_state.get("last_alert_price")
+    last_alert_price = (
+        None if force_alert else product_state.get("last_alert_price")
+    )
 
     listing = unit_pricing_from_texts(price.price, price.name, price.url)
 
@@ -88,6 +109,9 @@ def evaluate_deal(
     if not reasons:
         return None, baseline, None
 
+    if not _trusted_price_drop(baseline, price.price):
+        return None, baseline, None
+
     if last_alert_price is not None and abs(last_alert_price - price.price) < 0.01:
         return None, baseline, None
 
@@ -102,6 +126,29 @@ def evaluate_deal(
         target_unit_price=_unit_target(product),
     )
     return alert, baseline, price.price
+
+
+def deal_suppressed_reason(
+    product: ProductWatch,
+    price: PriceResult,
+    product_state: Dict[str, Any],
+) -> Optional[str]:
+    """Explain why a qualifying deal did not alert (usually anti-spam)."""
+    alert, _, _ = evaluate_deal(product, price, product_state)
+    if alert is not None:
+        return None
+
+    last_alert = product_state.get("last_alert_price")
+    if last_alert is None:
+        return None
+
+    without_spam = dict(product_state)
+    without_spam.pop("last_alert_price", None)
+    would_alert, _, _ = evaluate_deal(product, price, without_spam)
+    if would_alert is None:
+        return None
+
+    return f"already notified at €{last_alert:.2f}"
 
 
 def evaluate_alternative_deal(
@@ -150,6 +197,9 @@ def evaluate_alternative_deal(
     if not reasons:
         return None
 
+    if not _trusted_price_drop(baseline, price.price):
+        return None
+
     if last_alert_price is not None and abs(last_alert_price - price.price) < 0.01:
         return None
 
@@ -190,6 +240,9 @@ def evaluate_multipack_deal(
 
     reasons = _unit_deal_reasons(product, price, baseline_unit=baseline_unit)
     if not reasons:
+        return None
+
+    if not _trusted_unit_drop(baseline_unit, listing.price_per_piece):
         return None
 
     if (

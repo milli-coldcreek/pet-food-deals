@@ -3,7 +3,7 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-instinctive-adult-in-sosse-12x85-g-1099135",
     "matched_name": "ROYAL CANIN Instinctive Adult in Soße 12x85 g",
     "last_price": 15.49,
-    "last_checked": "2026-06-24T14:28:36.777772+00:00",
+    "last_checked": "2026-06-24T16:27:04.241458+00:00",
     "baseline_price": 15.49,
     "multipacks": {
       "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464": {
@@ -19,7 +19,7 @@
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_adult/113463?activeVariant=113463.15",
     "matched_name": "Royal Canin Instinctive in Soße",
     "last_price": 12.39,
-    "last_checked": "2026-06-24T14:28:52.452184+00:00",
+    "last_checked": "2026-06-24T17:10:31.671310+00:00",
     "baseline_price": 15.49,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.11": {
@@ -64,23 +64,22 @@
         "pack_label": "96x85g",
         "last_price": 123.92
       }
-    },
-    "last_alert_price": 12.39
+    }
   },
   "royal-canin-instinctive-in-so-e|12x85g|zooroyal": {
     "matched_url": "https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/",
     "matched_name": "ROYAL CANIN INSTINCTIVE Katzenfutter nass in Soße - 12x85g",
     "last_price": 76.8,
-    "last_checked": "2026-06-24T14:29:11.714659+00:00",
+    "last_checked": "2026-06-24T16:27:33.410581+00:00",
     "baseline_price": 76.8,
     "baseline_unit_price": 6.3999999999999995
   },
   "feringa-classic-meat-men|12x400g|fressnapf": {},
   "feringa-classic-meat-men|12x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.2",
-    "matched_name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g",
-    "last_price": 19.79,
-    "last_checked": "2026-06-24T14:30:02.879096+00:00",
+    "matched_name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Mixpaket 3 (Wild, Rind & Geflügel, Huhn & Forelle)",
+    "last_price": 24.98,
+    "last_checked": "2026-06-24T16:28:03.903700+00:00",
     "baseline_price": 21.96,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.9": {
@@ -88,185 +87,182 @@
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 1 (Kaninchen & Truthahn, Geflügel, Lachs & Truthahn)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.11": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 3 (Wild, Rind & Geflügel, Huhn & Forelle)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.0": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Geflügel",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.5": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Geflügel",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.10": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 2 (Kaninchen & Truthahn, Ente & Kalb, Lamm & Rind)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.9": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Mixpaket 1 (Kaninchen & Truthahn, Geflügel, Lachs & Truthahn)",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.12": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 4 (Geflügel, Lamm & Kaninchen, Lachs & Truthahn)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.3": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Huhn & Forelle",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.6": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Rind & Geflügel",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.2": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lachs & Pute",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.10": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Mixpaket 2 (Kaninchen & Truthahn, Ente & Kalb, Lamm & Rind)",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.1": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Kaninchen & Truthahn",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.11": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Mixpaket 3 (Wild, Rind & Geflügel, Huhn & Forelle)",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.5": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Wild",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.7": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lamm & Kaninchen",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.8": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lamm & Rind",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.4": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Ente & Kalb",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 12.49
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.8": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Lamm & Kaninchen",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.6": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Wild",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.1": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Kaninchen & Truthahn",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.4": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Lachs & Pute",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.3": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Rind & Geflügel",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.0": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Huhn & Forelle",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.12": {
         "baseline_price": 49.96,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Mixpaket 4 (Geflügel, Lamm & Kaninchen, Lachs & Truthahn)",
         "pack_label": "24x400g",
-        "last_price": 13.58
+        "last_price": 49.96
       }
-    },
-    "last_alert_price": 19.79
+    }
   },
   "feringa-classic-meat-men|12x400g|zooroyal": {},
   "feringa-classic-meat-men|24x400g|fressnapf": {},
   "feringa-classic-meat-men|24x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.5",
-    "matched_name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g",
-    "last_price": 13.58,
-    "last_checked": "2026-06-24T14:31:01.642943+00:00",
-    "baseline_price": 21.96,
+    "matched_name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g Geflügel",
+    "last_checked": "2026-06-24T16:28:53.427993+00:00",
     "alternatives": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/saison_menu/1408319?activeVariant=1408319.1": {
         "baseline_price": 49.96,
         "name": "Limited Edition: Feringa Classic Meat Wintermenü Wild & Gans 24 x 400 g",
-        "last_price": 12.49
+        "last_price": 49.96
       }
     },
     "multipacks": {
@@ -275,178 +271,180 @@
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 1 (Kaninchen & Truthahn, Geflügel, Lachs & Truthahn)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.2": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Mixpaket 3 (Wild, Rind & Geflügel, Huhn & Forelle)",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.0": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Mixpaket 1 (Kaninchen & Truthahn, Geflügel, Lachs & Truthahn)",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.11": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 3 (Wild, Rind & Geflügel, Huhn & Forelle)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.0": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Geflügel",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.10": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Mixpaket 4 (Geflügel, Lamm & Kaninchen, Lachs & Truthahn)",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.3": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Mixpaket 2 (Kaninchen & Truthahn, Ente & Kalb, Lamm & Rind)",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.10": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 2 (Kaninchen & Truthahn, Ente & Kalb, Lamm & Rind)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.12": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Mixpaket 4 (Geflügel, Lamm & Kaninchen, Lachs & Truthahn)",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.3": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Huhn & Forelle",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.17": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Geflügel",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.6": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Rind & Geflügel",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.2": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lachs & Pute",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.1": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Kaninchen & Truthahn",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.5": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Wild",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.7": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lamm & Kaninchen",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.5": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Huhn & Forelle",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.8": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Lamm & Rind",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.4": {
         "baseline_price": 12.49,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Feringa Classic Meat Menü 6 x 400 g Ente & Kalb",
         "pack_label": "6x400g",
-        "last_price": 11.24
+        "last_price": 9.93
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.6": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Rind & Geflügel",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.13": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Ente & Kalb",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.18": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Kaninchen & Truthahn",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.4": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Wild",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.16": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Lachs & Pute",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.14": {
         "baseline_price": 24.98,
         "baseline_unit_price": 2.0816666666666666,
         "name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g Lamm & Kaninchen",
         "pack_label": "12x400g",
-        "last_price": 19.79
+        "last_price": 24.98
       }
     },
-    "last_alert_price": 13.58
+    "last_price": 49.96,
+    "baseline_price": 39.59,
+    "baseline_unit_price": 1.6495833333333334
   },
   "feringa-classic-meat-men|24x400g|zooroyal": {},
   "royal-canin-instinctive-7-in-so-e|12x85g|fressnapf": {
@@ -462,13 +460,13 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464/",
     "matched_name": "ROYAL CANIN Instinctive 7+ 12x85 g",
     "last_price": 15.99,
-    "last_checked": "2026-06-24T14:31:28.060367+00:00",
+    "last_checked": "2026-06-24T16:29:18.238684+00:00",
     "baseline_price": 15.99,
     "baseline_unit_price": 1.3325
   },
   "royal-canin-instinctive-7-in-so-e|12x85g|zooplus": {
-    "last_price": 12.23,
-    "last_checked": "2026-06-24T14:31:52.845727+00:00",
+    "last_price": 15.29,
+    "last_checked": "2026-06-24T16:29:35.254379+00:00",
     "baseline_price": 15.29,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.11": {
@@ -515,14 +513,13 @@
       }
     },
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.10",
-    "matched_name": "Royal Canin Instinctive +7 in Soße",
-    "last_alert_price": 12.23
+    "matched_name": "Royal Canin Instinctive +7 in Soße 12 x 85 g"
   },
   "royal-canin-instinctive-7-in-so-e|12x85g|zooroyal": {
     "matched_url": "https://www.zooroyal.de/p/royal-canin-instinctive-7-nassfutter-in-sosse-fuer-aeltere-katzen-12x85g/1000076863/",
     "matched_name": "ROYAL CANIN INSTINCTIVE 7+ Nassfutter in Soße für ältere Katzen - 12x85g",
     "last_price": 84.0,
-    "last_checked": "2026-06-24T14:32:32.050479+00:00",
+    "last_checked": "2026-06-24T16:30:11.067274+00:00",
     "baseline_price": 84.0,
     "baseline_unit_price": 7.0
   },
@@ -530,9 +527,7 @@
   "cosma-asia-in-jelly|12x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303003?activeVariant=303003.26",
     "matched_name": "Sparpaket Cosma Asia in Jelly 12 x 400 g",
-    "last_price": 20.89,
-    "last_checked": "2026-06-24T14:32:56.474209+00:00",
-    "baseline_price": 33.98,
+    "last_checked": "2026-06-24T16:39:11.277903+00:00",
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303001?activeVariant=303001.23": {
         "baseline_price": 16.99,
@@ -581,26 +576,27 @@
         "baseline_unit_price": 2.9149999999999996,
         "name": "Cosma Asia in Jelly 6 x 400 g Thunfisch & Brasse",
         "pack_label": "6x400g",
-        "last_price": 15.29
+        "last_price": 15.74
       },
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303001?activeVariant=303001.14": {
         "baseline_price": 17.49,
         "baseline_unit_price": 2.9149999999999996,
         "name": "Cosma Asia in Jelly 6 x 400 g Thunfisch & Krebsfleisch",
         "pack_label": "6x400g",
-        "last_price": 15.29
+        "last_price": 15.74
       }
     },
-    "last_alert_price": 20.89
+    "last_price": 27.89,
+    "baseline_price": 21.99,
+    "baseline_unit_price": 1.8324999999999998
   },
   "cosma-asia-in-jelly|12x400g|zooroyal": {},
   "premiere-meati-nassfutter-hund|6x800g|fressnapf": {
-    "matched_url": "https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-rinderpansen--herz-und--leber-6x800-g-1248590",
-    "matched_name": "PREMIERE Meati Nassfutter Hund, Adult, Rinderpansen, -herz und -leber 6x800 g",
+    "matched_url": "https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-huehnerherzen-6x800-g-1210274",
+    "matched_name": "PREMIERE Meati Nassfutter Hund, Adult, Hühnerherzen 6x800 g",
     "last_price": 12.48,
-    "last_checked": "2026-06-24T14:33:18.929127+00:00",
-    "baseline_price": 12.48,
-    "last_alert_price": 12.48
+    "last_checked": "2026-06-24T16:30:49.016272+00:00",
+    "baseline_price": 12.48
   },
   "premiere-meati-nassfutter-hund|6x800g|zooplus": {
     "last_price": 21.99,
@@ -612,7 +608,7 @@
     "matched_url": "https://www.fressnapf.de/p/premiere-excellent-xl-klumpstreu-katze-12-kg-1237777",
     "matched_name": "PREMIERE Excellent XL Klumpstreu Katze 12 kg",
     "last_price": 14.99,
-    "last_checked": "2026-06-24T14:33:34.888625+00:00",
+    "last_checked": "2026-06-24T16:31:08.390339+00:00",
     "baseline_price": 14.99
   },
   "premiere-excellent-klumpstreu-katze-12-kg|12kg|zooplus": {},
@@ -621,7 +617,7 @@
     "matched_url": "https://www.fressnapf.de/p/premiere-carbon-control-multi-cat-xl-klumpstreu-katze-12-l-1275970",
     "matched_name": "PREMIERE Carbon Control Multi-Cat XL Klumpstreu Katze 12 l",
     "last_price": 17.59,
-    "last_checked": "2026-06-24T14:33:46.292219+00:00",
+    "last_checked": "2026-06-24T16:31:20.188412+00:00",
     "baseline_price": 17.59
   },
   "premiere-carbon-control-multi-cat-klumpstreu-katze-12-l|12l|zooplus": {},

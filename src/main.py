@@ -7,7 +7,12 @@ from pathlib import Path
 from .scrapers import fressnapf, zooplus, zooroyal  # noqa: F401
 
 from .config import get_telegram_config, load_products
-from .deals import evaluate_alternative_deal, evaluate_deal, evaluate_multipack_deal
+from .deals import (
+    deal_suppressed_reason,
+    evaluate_alternative_deal,
+    evaluate_deal,
+    evaluate_multipack_deal,
+)
 from .matching import pack_sizes_match, product_matches
 from .notifier import format_deal_message, send_deal_alerts
 from .pricing import unit_pricing_from_texts
@@ -64,15 +69,37 @@ def _try_url_fallback(product, entry) -> "PriceResult | None":
         return None
 
 
-def run(state_path: Path | None = None, products_path: Path | None = None) -> int:
+def _product_matches_filter(product, needles: list[str]) -> bool:
+    haystack = " ".join(
+        (product.name, product.search_query, product.pack_size, product.key)
+    ).lower()
+    return any(needle.lower() in haystack for needle in needles)
+
+
+def run(
+    state_path: Path | None = None,
+    products_path: Path | None = None,
+    *,
+    only: list[str] | None = None,
+    retailers: list[str] | None = None,
+    force_alerts: bool = False,
+) -> int:
     products = load_products(products_path)
     if not products:
         print("No products configured in products.yaml")
         return 1
 
+    if only:
+        products = [p for p in products if _product_matches_filter(p, only)]
+        if not products:
+            print(f"No products matched --only filter: {only!r}")
+            return 1
+        print(f"Filter active — checking {len(products)} product(s): {only!r}")
+
     state = load_state(state_path)
     alerts = []
     errors = 0
+    processed_multipack_urls: set[str] = set()
 
     for index, product in enumerate(products):
         if index > 0:
@@ -82,7 +109,14 @@ def run(state_path: Path | None = None, products_path: Path | None = None) -> in
             errors = _check_legacy_url(product, state, alerts, errors)
             continue
 
-        for r_index, retailer in enumerate(product.retailers):
+        retailer_filter = set(retailers) if retailers else None
+        check_retailers = [
+            r for r in product.retailers if retailer_filter is None or r in retailer_filter
+        ]
+        if retailer_filter and not check_retailers:
+            continue
+
+        for r_index, retailer in enumerate(check_retailers):
             if r_index > 0:
                 time.sleep(1)
 
@@ -99,9 +133,10 @@ def run(state_path: Path | None = None, products_path: Path | None = None) -> in
                 )
                 continue
 
-            price = search_result.primary
+            # Pinned retailer URL wins over search HTML (search misses Extra-Rabatt).
+            price = _try_retailer_url_hint(product, retailer)
             if price is None:
-                price = _try_retailer_url_hint(product, retailer)
+                price = search_result.primary
             if price is None:
                 price = _try_url_fallback(product, entry)
 
@@ -122,17 +157,33 @@ def run(state_path: Path | None = None, products_path: Path | None = None) -> in
             else:
                 unit = unit_pricing_from_texts(price.price, price.name, price.url)
                 unit_note = f" ({unit.price_per_piece:.2f}/pc)" if unit else ""
+                orig_note = ""
+                if price.original_price and price.original_price > price.price:
+                    orig_note = f" (was €{price.original_price:.2f})"
                 print(
-                    f"OK  [{product.name} @ {retailer}] €{price.price:.2f}{unit_note} "
+                    f"OK  [{product.name} @ {retailer}] €{price.price:.2f}{unit_note}{orig_note} "
                     f"— {price.name[:60]}..."
                 )
                 entry["matched_url"] = price.url
                 entry["matched_name"] = price.name
 
-                alert = _process_price(product, price, entry, state, key)
+                alert = _process_price(
+                    product, price, entry, state, key, force_alert=force_alerts
+                )
                 if alert:
                     primary_on_deal = True
                     alerts.append(alert)
+                    print(
+                        f"DEAL [{product.name} @ {retailer}] €{price.price:.2f} "
+                        f"— {alert.reason}"
+                    )
+                else:
+                    suppressed = deal_suppressed_reason(product, price, entry)
+                    if suppressed:
+                        print(
+                            f"SKIP [{product.name} @ {retailer}] €{price.price:.2f} "
+                            f"— {suppressed}"
+                        )
 
             primary_price = price.price if price else None
             seen_urls = {
@@ -160,10 +211,16 @@ def run(state_path: Path | None = None, products_path: Path | None = None) -> in
                 )
                 if alt_alert:
                     alerts.append(alt_alert)
+                    print(
+                        f"DEAL [{product.name} @ {retailer}] ALT €{alt.price:.2f} "
+                        f"— {alt_alert.reason}"
+                    )
 
             for mp in search_result.multipacks:
-                if mp.url.rstrip("/") in seen_urls:
+                mp_key = mp.url.rstrip("/")
+                if mp_key in seen_urls or mp_key in processed_multipack_urls:
                     continue
+                processed_multipack_urls.add(mp_key)
                 unit = unit_pricing_from_texts(mp.price, mp.name, mp.url)
                 if not unit:
                     continue
@@ -180,6 +237,10 @@ def run(state_path: Path | None = None, products_path: Path | None = None) -> in
                 )
                 if mp_alert:
                     alerts.append(mp_alert)
+                    print(
+                        f"DEAL [{product.name} @ {retailer}] MPK €{mp.price:.2f} "
+                        f"— {mp_alert.reason}"
+                    )
 
     save_state(state, state_path)
 
@@ -208,7 +269,7 @@ def _initial_baseline(price) -> float:
     return price.price
 
 
-def _process_price(product, price, entry, state, key):
+def _process_price(product, price, entry, state, key, *, force_alert: bool = False):
     baseline = entry.get("baseline_price")
     if baseline is None:
         initial_baseline = _initial_baseline(price)
@@ -221,7 +282,9 @@ def _process_price(product, price, entry, state, key):
         print(f"    Baseline set to €{initial_baseline:.2f}")
         return None
 
-    alert, baseline, alert_price = evaluate_deal(product, price, entry)
+    alert, baseline, alert_price = evaluate_deal(
+        product, price, entry, force_alert=force_alert
+    )
     update_product_state(
         state,
         key,
@@ -322,7 +385,43 @@ def _check_legacy_url(product, state, alerts, errors):
 
 
 def main() -> None:
-    raise SystemExit(run())
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Check configured pet food products for deals."
+    )
+    parser.add_argument(
+        "--only",
+        "-o",
+        action="append",
+        metavar="TEXT",
+        help=(
+            "Only run products whose name, search query, or pack size contains "
+            "TEXT (repeat -o for multiple filters; any match counts)"
+        ),
+    )
+    parser.add_argument(
+        "--retailer",
+        "-r",
+        action="append",
+        choices=["fressnapf", "zooplus", "zooroyal"],
+        dest="retailers",
+        help="Only check these shops (repeat for multiple)",
+    )
+    parser.add_argument(
+        "--force-alerts",
+        action="store_true",
+        help="Re-send alerts even if already notified at the current price",
+    )
+    args = parser.parse_args()
+
+    only = args.only
+    if only and len(only) == 1 and "," in only[0]:
+        only = [part.strip() for part in only[0].split(",") if part.strip()]
+
+    raise SystemExit(
+        run(only=only, retailers=args.retailers, force_alerts=args.force_alerts)
+    )
 
 
 if __name__ == "__main__":
