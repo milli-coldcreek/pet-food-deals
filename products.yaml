@@ -9,6 +9,7 @@ products:
     target_price: 15.00
     retailer_urls:
       zooroyal: "https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/"
+      zooplus: "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_adult/113463?activeVariant=113463.15"
   - name: "Feringa Classic Meat Menü"
     pet: "Cats"
     search_query: "Feringa Classic Meat Menü"

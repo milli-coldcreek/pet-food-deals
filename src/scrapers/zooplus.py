@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 
 from bs4 import BeautifulSoup
@@ -12,6 +12,7 @@ from .base import BaseScraper, http_get, parse_german_price, register_scraper
 
 PACK_TOTAL_MIN = 3.0
 PACK_TOTAL_MAX = 250.0
+SINGLE_PACK_MAX = 22.0
 
 
 class ZooplusScraper(BaseScraper):
@@ -26,20 +27,19 @@ class ZooplusScraper(BaseScraper):
 
         data = json.loads(next_data.string)
         variant_id = self._variant_id_from_url(url)
-        product = self._extract_product(data)
-        if product is None:
-            raise ValueError("Could not parse Zooplus product from page data")
-
-        name = product.get("name") or product.get("title") or "Unknown product"
-        price = self._best_pack_price(data, variant_id=variant_id)
-        if price is None:
-            price = self._extract_price(product)
+        name = self._extract_name(soup, data)
+        price, original = self._best_pack_price(data, variant_id=variant_id)
         if price is None:
             raise ValueError("Could not parse Zooplus price")
 
-        original = self._extract_original_price(product, price)
-        discount = self._extract_discount(product, price, original)
-        in_stock = self._extract_stock(product)
+        discount = None
+        if original and original > price:
+            discount = round((original - price) / original * 100, 1)
+
+        in_stock = True
+        product = self._extract_product(data)
+        if product is not None:
+            in_stock = self._extract_stock(product)
 
         return PriceResult(
             name=name,
@@ -56,9 +56,23 @@ class ZooplusScraper(BaseScraper):
         values = params.get("activeVariant") or params.get("variant")
         return values[0] if values else None
 
+    def _extract_name(self, soup: BeautifulSoup, data: Any) -> str:
+        heading = soup.find("h1")
+        if heading:
+            text = heading.get_text(" ", strip=True)
+            if len(text) >= 8:
+                return text
+        for item in self._walk_dicts(data):
+            if not isinstance(item, dict):
+                continue
+            for key in ("name", "title", "productName"):
+                value = item.get(key)
+                if isinstance(value, str) and len(value) >= 12:
+                    return value
+        return "Unknown product"
+
     def _extract_product(self, data: Any) -> Optional[dict]:
-        candidates = list(self._walk_dicts(data))
-        for item in candidates:
+        for item in self._walk_dicts(data):
             if isinstance(item, dict) and self._looks_like_product(item):
                 return item
         return None
@@ -87,98 +101,71 @@ class ZooplusScraper(BaseScraper):
             for value in node:
                 yield from self._walk_dicts(value)
 
-    def _node_matches_variant(self, item: dict, variant_id: Optional[str]) -> bool:
-        if not variant_id:
-            return True
-        for key in ("articleId", "variantId", "id", "shopIdentifier"):
+    def _item_related_to_variant(self, item: dict, variant_id: str) -> bool:
+        for key in ("articleId", "variantId", "id", "shopIdentifier", "shopArticleId"):
             value = item.get(key)
             if value is not None and str(value) == variant_id:
                 return True
+        for value in item.values():
+            if isinstance(value, (str, int, float)) and str(value) == variant_id:
+                return True
         return False
 
-    def _best_pack_price(self, data: Any, *, variant_id: Optional[str]) -> Optional[float]:
-        def collect_prices(*, require_variant: bool) -> List[float]:
-            prices: List[float] = []
-            for item in self._walk_dicts(data):
-                if not isinstance(item, dict):
-                    continue
-                if require_variant and variant_id and not self._node_matches_variant(
-                    item, variant_id
-                ):
-                    continue
-                for key in ("discountedPriceRaw", "discountPriceRaw"):
-                    parsed = self._parse_price_value(item.get(key))
-                    if parsed is not None and PACK_TOTAL_MIN <= parsed <= 22:
-                        prices.append(parsed)
-            return prices
+    def _prices_from_item(self, item: dict) -> Tuple[List[float], List[float]]:
+        discounted: List[float] = []
+        regular: List[float] = []
+        for key in ("discountedPriceRaw", "discountPriceRaw"):
+            parsed = self._parse_price_value(item.get(key))
+            if parsed is not None and PACK_TOTAL_MIN <= parsed <= SINGLE_PACK_MAX:
+                discounted.append(parsed)
+        for key in ("minArticlePriceRaw", "price", "currentPrice", "offerPrice"):
+            parsed = self._parse_price_value(item.get(key))
+            if parsed is not None and PACK_TOTAL_MIN <= parsed <= PACK_TOTAL_MAX:
+                regular.append(parsed)
+        return discounted, regular
 
-        prices = collect_prices(require_variant=True)
-        if not prices and variant_id:
-            prices = collect_prices(require_variant=False)
-        if prices:
-            return min(prices)
+    def _best_pack_price(
+        self, data: Any, *, variant_id: Optional[str]
+    ) -> Tuple[Optional[float], Optional[float]]:
+        variant_disc: List[float] = []
+        variant_reg: List[float] = []
+        all_disc: List[float] = []
+        all_reg: List[float] = []
 
-        list_prices: List[float] = []
         for item in self._walk_dicts(data):
             if not isinstance(item, dict):
                 continue
-            for key in ("minArticlePriceRaw", "price", "currentPrice", "offerPrice"):
-                parsed = self._parse_price_value(item.get(key))
-                if parsed is not None and PACK_TOTAL_MIN <= parsed <= PACK_TOTAL_MAX:
-                    list_prices.append(parsed)
-        return min(list_prices) if list_prices else None
+            discounted, regular = self._prices_from_item(item)
+            all_disc.extend(discounted)
+            all_reg.extend(regular)
+            if variant_id and self._item_related_to_variant(item, variant_id):
+                variant_disc.extend(discounted)
+                variant_reg.extend(regular)
 
-    def _extract_price(self, product: dict) -> Optional[float]:
-        for key in ("price", "currentPrice", "offerPrice", "sellingPrice", "discountedPrice"):
-            value = product.get(key)
-            parsed = self._parse_price_value(value)
-            if parsed is not None:
-                return parsed
+        if variant_disc:
+            price = min(variant_disc)
+            original = min(variant_reg) if variant_reg else None
+            if original is not None and original <= price:
+                original = max(variant_reg) if variant_reg else None
+            return price, original or self._pick_original(all_reg, price)
 
-        variants = product.get("variants") or product.get("articleVariants") or []
-        if isinstance(variants, list):
-            for variant in variants:
-                if isinstance(variant, dict):
-                    parsed = self._extract_price(variant)
-                    if parsed is not None:
-                        return parsed
-        return None
+        if variant_reg and variant_id:
+            price = min(variant_reg)
+            return price, max(variant_reg) if len(variant_reg) > 1 else None
 
-    def _extract_original_price(self, product: dict, current: float) -> Optional[float]:
-        for key in ("originalPrice", "listPrice", "recommendedRetailPrice", "rrp", "uvp"):
-            value = product.get(key)
-            parsed = self._parse_price_value(value)
-            if parsed is not None and parsed > current:
-                return parsed
+        if all_disc:
+            price = min(all_disc)
+            return price, self._pick_original(all_reg, price)
 
-        for key in ("minArticlePriceRaw", "price", "currentPrice"):
-            parsed = self._parse_price_value(product.get(key))
-            if parsed is not None and parsed > current:
-                return parsed
+        if all_reg:
+            price = min(all_reg)
+            return price, None
 
-        discount = product.get("discount") or product.get("discountPercentage")
-        if isinstance(discount, str):
-            match = re.search(r"(\d+)", discount)
-            if match:
-                pct = float(match.group(1))
-                if pct > 0:
-                    return round(current / (1 - pct / 100), 2)
-        return None
+        return None, None
 
-    def _extract_discount(
-        self, product: dict, price: float, original: Optional[float]
-    ) -> Optional[float]:
-        for key in ("discount", "discountPercentage", "discountPercent"):
-            value = product.get(key)
-            if isinstance(value, (int, float)) and value > 0:
-                return float(value)
-            if isinstance(value, str):
-                match = re.search(r"(\d+)", value)
-                if match:
-                    return float(match.group(1))
-        if original and original > price:
-            return round((original - price) / original * 100, 1)
-        return None
+    def _pick_original(self, regular: List[float], current: float) -> Optional[float]:
+        above = [p for p in regular if p > current + 0.01]
+        return min(above) if above else None
 
     def _extract_stock(self, product: dict) -> bool:
         for key in ("inStock", "available", "isAvailable"):
