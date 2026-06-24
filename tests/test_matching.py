@@ -67,6 +67,18 @@ class TestMatching(unittest.TestCase):
         q = "Royal Canin Instinctive 7+ in Soße"
         self.assertTrue(product_matches(q, "12x85g", title, url=url))
 
+    def test_fressnapf_api_title_brand_only_in_url(self):
+        title = "Instinctive 7+ 12x85 g"
+        url = "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464/"
+        q = "Royal Canin Instinctive 7+ in Soße"
+        self.assertTrue(product_matches(q, "12x85g", title, url=url))
+
+    def test_zooplus_plus7_title(self):
+        title = "Royal Canin Instinctive +7 in Soße"
+        url = "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466"
+        q = "Royal Canin Instinctive 7+ in Soße"
+        self.assertTrue(product_matches(q, "12x85g", title, url=url))
+
     def test_cosma_sparpaket(self):
         title = "Sparpaket Cosma Asia in Jelly 12 x 400 g Thunfisch & Brasse"
         q = "Cosma Asia in Jelly"

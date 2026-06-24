@@ -137,6 +137,8 @@ def normalize_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     text = re.sub(r"\b\+7\b", "7plus", text)
     text = re.sub(r"\b7\+\b", "7plus", text)
+    text = re.sub(r"\+7", "7plus", text)
+    text = re.sub(r"7\+", "7plus", text)
     text = re.sub(r"\binstinctive\s+7\b", "instinctive 7plus", text)
     text = re.sub(r"\b(sosse|sauce)\b", "sosse", text)
     text = re.sub(r"\b(jelly|gelee)\b", "gelee", text)
@@ -223,13 +225,15 @@ def product_matches(
         return False
 
     title_tokens = _tokens(normalize_text(title))
-    if not _brand_present(q_tokens, title_tokens):
+    url_tokens = _tokens(normalize_text(url))
+    if not _brand_present(q_tokens, title_tokens | url_tokens):
         return False
 
     need = _distinctive(q_tokens)
     # Wet-food words are often omitted from short API titles — check separately
     core_need = need - WET_FOOD_TOKENS - {"7plus"}
-    if core_need and not _distinctive_in_title(core_need, title_tokens):
+    listing_tokens = title_tokens | url_tokens
+    if core_need and not _distinctive_in_title(core_need, listing_tokens):
         return False
 
     wet_in_query = need & WET_FOOD_TOKENS
@@ -255,7 +259,8 @@ def product_matches(
         return False
 
     if "sosse" in need and "gelee" in b_tokens and "sosse" not in b_tokens:
-        return False
+        if "nassfutter" not in b_tokens and "nass" not in b_tokens:
+            return False
     if "gelee" in need and "sosse" in b_tokens and "gelee" not in b_tokens:
         return False
 
@@ -443,7 +448,8 @@ def multipack_deal_matches(
         return False
 
     if "sosse" in need and "gelee" in b_tokens and "sosse" not in b_tokens:
-        return False
+        if "nassfutter" not in b_tokens and "nass" not in b_tokens:
+            return False
     if "gelee" in need and "sosse" in b_tokens and "gelee" not in b_tokens:
         return False
 

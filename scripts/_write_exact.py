@@ -1,0 +1,22 @@
+﻿import base64
+from pathlib import Path
+_o=chr(91); _c=chr(93); q=chr(39); dq=chr(34)
+lines = []
+lines.append('import json, sys\n')
+lines.append('from pathlib import Path\n')
+lines.append('sys.path.insert(0, str(Path(__file__).resolve().parent.parent))\n')
+lines.append('from bs4 import BeautifulSoup\n')
+lines.append('from src.scrapers.base import http_get\n')
+lines.append('URL = '+dq+'https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.10'+dq+'\n')
+lines.append('soup = BeautifulSoup(http_get(URL).text, '+dq+'html.parser'+dq+')\n')
+lines.append('data = json.loads(soup.find('+dq+'script'+dq+', id='+dq+'__NEXT_DATA__'+dq+').string)\n')
+lines.append('text = json.dumps(data)\n')
+lines.append('import re\n')
+lines.append('# find numbers like 1529, 1376, 15.29, 13.76 near price/discount/rabatt\n')
+lines.append(base64.b64decode('Zm9yIG0gaW4gcmUuZmluZGl0ZXIociciKD86W14iXSooPzpwcmljZXxQcmljZXxyYWJhdHR8UmFiYXR0fGRpc2NvdW50fERpc2NvdW50KVteIl0qKSJccyo6XHMqKFswLTkuXSspJywgdGV4dCk6Cg==').decode())
+lines.append('    v = float(m.group(1))\n')
+lines.append('    if v > 100 and v < 10000:\n')
+lines.append('        print('+q+'cents?'+q+', m.group(0)'+_o+':80'+_c+', v, '+q+'eur'+q+', v/100)\n')
+lines.append('    elif 5 < v < 50:\n')
+lines.append('        print('+q+'eur?'+q+', m.group(0)'+_o+':80'+_c+', v)\n')
+Path(r'C:/Users/Milena/Projects/pet-food-deals/scripts/probe_z2.py').write_text(''.join(lines), encoding='utf-8')

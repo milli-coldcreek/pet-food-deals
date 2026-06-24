@@ -26,6 +26,8 @@ products:
     target_price: 15.00
     retailer_urls:
       zooroyal: "https://www.zooroyal.de/p/royal-canin-instinctive-7-nassfutter-in-sosse-fuer-aeltere-katzen-12x85g/1000076863/"
+      fressnapf: "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464/"
+      zooplus: "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.10"
   - name: "Cosma Asia in Jelly"
     pet: "Cats"
     search_query: "Cosma Asia in Jelly"

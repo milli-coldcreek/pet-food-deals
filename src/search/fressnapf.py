@@ -12,6 +12,7 @@ from .common import (
     candidate_to_price_result,
     find_alternative_offers,
     find_multipack_offers,
+    hint_url_candidate,
 )
 from .queries import search_query_variants
 
@@ -92,9 +93,17 @@ def _product_url(product: dict) -> str:
 class FressnapfSearch:
     retailer = "fressnapf"
 
-    def collect_candidates(self, query: str, pack_size: str) -> List[Candidate]:
+    def collect_candidates(
+        self, query: str, pack_size: str, *, hint_url: str = ""
+    ) -> List[Candidate]:
         candidates: List[Candidate] = []
         seen: set[str] = set()
+
+        hinted = hint_url_candidate(hint_url)
+        if hinted:
+            title, url, price, original, in_stock = hinted
+            seen.add(url)
+            candidates.append((title, url, price, original, in_stock))
         headers = {
             "User-Agent": USER_AGENT,
             "Accept": "application/json",
@@ -138,7 +147,7 @@ class FressnapfSearch:
     def search_full(
         self, query: str, pack_size: str, *, hint_url: str = ""
     ) -> RetailerSearchResult:
-        candidates = self.collect_candidates(query, pack_size)
+        candidates = self.collect_candidates(query, pack_size, hint_url=hint_url)
         matched = best_search_match(query, pack_size, candidates)
         primary = None
         if matched:

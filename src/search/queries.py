@@ -38,4 +38,18 @@ def search_query_variants(query: str, pack_size: str) -> List[str]:
     )
     add(ascii_q)
     add(f"{ascii_q} {pack_size}".strip())
+
+    # Shorter queries for shops with weak full-string search
+    if " in " in query:
+        add(query.split(" in ", 1)[0].strip())
+        add(f"{query.split(' in ', 1)[0].strip()} {pack_size}".strip())
+
+    for old, new in (("7+", "7"), ("7+", "+7"), ("+7", "7")):
+        if old in query:
+            shortened = query.replace(old, new)
+            add(shortened)
+            add(f"{shortened} {pack_size}".strip())
+            if " in " in shortened:
+                add(shortened.split(" in ", 1)[0].strip())
+
     return variants

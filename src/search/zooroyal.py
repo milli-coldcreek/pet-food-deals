@@ -15,6 +15,7 @@ from .common import (
     candidate_to_price_result,
     find_alternative_offers,
     find_multipack_offers,
+    hint_url_candidate,
     parse_search_page_products,
 )
 from .queries import search_query_variants
@@ -35,9 +36,7 @@ class ZooroyalSearch:
         enrich_budget = MAX_ENRICH
 
         if hint_url:
-            hinted = enrich_zooroyal_candidate(
-                ("", hint_url.rstrip("/") + "/", None, None, True)
-            )
+            hinted = hint_url_candidate(hint_url)
             if hinted:
                 title, url, price, original, in_stock = hinted
                 if price is not None:

@@ -20,6 +20,24 @@ PRICE_RE = re.compile(r"(\d+[,.]\d{2})\s*€")
 Candidate = tuple[str, str, float, Optional[float], bool]
 
 
+def hint_url_candidate(hint_url: str) -> Optional[Candidate]:
+    if not hint_url:
+        return None
+    from ..scrapers.base import fetch_price
+
+    try:
+        scraped = fetch_price(hint_url.strip())
+    except Exception:
+        return None
+    return (
+        scraped.name,
+        scraped.url,
+        scraped.price,
+        scraped.original_price,
+        scraped.in_stock,
+    )
+
+
 def candidate_to_price_result(
     retailer: str,
     title: str,
