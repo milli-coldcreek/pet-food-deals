@@ -49,6 +49,16 @@ EXTRA_RABATT_PCT_RE = re.compile(
 
 DISCOUNTED_RAW_RE = re.compile(r'"discountedPriceRaw"\s*:\s*(\d+)')
 
+ABO_JSON_CONTEXT_RE = re.compile(
+    r'"zooplusAbo"|"zooplusABO"|"subscriptionOffer"|"subscriptionPrice"|"sparAbo"|"autoshipment"',
+    re.IGNORECASE,
+)
+
+# Zooplus Abo is typically exactly 10% below list — same as Einzellieferung, so never
+# trust JSON-only 10% discounts; use HTML Einzellieferung / Extra-Rabatt blocks instead.
+STANDARD_ABO_DISCOUNT_PCT = 10.0
+PRICE_MATCH_TOLERANCE = 0.02
+
 
 class ZooplusScraper(BaseScraper):
     retailer = "zooplus"
@@ -142,9 +152,11 @@ class ZooplusScraper(BaseScraper):
                 return True
         return False
 
-    def _extract_prices_from_node(self, node: dict, *, depth: int = 0) -> dict[str, Any]:
+    def _extract_prices_from_node(
+        self, node: dict, *, depth: int = 0, in_subscription_branch: bool = False
+    ) -> dict[str, Any]:
         found: dict[str, Any] = {}
-        if depth > 3:
+        if depth > 3 or in_subscription_branch:
             return found
         for key, value in node.items():
             if self._is_subscription_price_field(key):
@@ -153,12 +165,20 @@ class ZooplusScraper(BaseScraper):
                 found[key] = value
                 continue
             if isinstance(value, dict):
+                child_is_sub = self._is_subscription_price_field(key) or key.lower() in (
+                    "zooplusabo",
+                    "subscription",
+                    "abooptions",
+                    "autoshipment",
+                )
                 for sub_key, sub_value in value.items():
-                    if self._is_subscription_price_field(sub_key):
+                    if self._is_subscription_price_field(sub_key) or child_is_sub:
                         continue
                     if self._is_price_field(sub_key):
                         found[sub_key] = sub_value
-                nested = self._extract_prices_from_node(value, depth=depth + 1)
+                nested = self._extract_prices_from_node(
+                    value, depth=depth + 1, in_subscription_branch=child_is_sub
+                )
                 for sub_key, sub_value in nested.items():
                     if sub_key not in found:
                         found[sub_key] = sub_value
@@ -210,6 +230,9 @@ class ZooplusScraper(BaseScraper):
                 if idx < 0:
                     break
                 chunk = text[max(0, idx - 800) : idx + 3000]
+                if self._json_chunk_is_abo_context(chunk):
+                    start = idx + len(anchor)
+                    continue
                 for match in PRICE_VALUE_RE.finditer(chunk):
                     key, raw = match.group(1), match.group(2)
                     if self._is_subscription_price_field(key):
@@ -219,6 +242,34 @@ class ZooplusScraper(BaseScraper):
                     fields[key] = int(raw) if raw.isdigit() else float(raw)
                 start = idx + len(anchor)
         return fields
+
+    def _json_chunk_is_abo_context(self, chunk: str) -> bool:
+        return bool(ABO_JSON_CONTEXT_RE.search(chunk))
+
+    def _is_standard_abo_price(self, price: float, list_price: Optional[float]) -> bool:
+        if list_price is None or list_price <= 0:
+            return False
+        expected = round(list_price * (1 - STANDARD_ABO_DISCOUNT_PCT / 100), 2)
+        return abs(price - expected) <= PRICE_MATCH_TOLERANCE
+
+    def _html_verified_discounts(
+        self, soup: BeautifulSoup, list_price: Optional[float]
+    ) -> list[Tuple[float, Optional[float]]]:
+        """Only Extra-Rabatt counts as a one-time discount.
+
+        Einzellieferung -10% matches zooplus Abo -10% on many products and causes
+        false alerts for Feringa/Cosma. Extra-Rabatt (-20%) is the real sale tier
+        (e.g. Royal Canin €12.39).
+        """
+        verified: list[Tuple[float, Optional[float]]] = []
+        text = soup.get_text(" ", strip=True)
+        if "extra-rabatt" not in text.lower():
+            return verified
+
+        extra_price, extra_regular = self._extra_rabatt_price(soup, list_price)
+        if extra_price is not None:
+            verified.append((extra_price, extra_regular))
+        return verified
 
     def _min_plausible_total(self, name: str, url: str) -> Optional[float]:
         pack = None
@@ -283,6 +334,7 @@ class ZooplusScraper(BaseScraper):
     def _one_time_deals_from_article(
         self, article: dict, list_price: Optional[float]
     ) -> list[Tuple[float, Optional[float]]]:
+        """Legacy helper for tests — JSON discount fields are not trusted alone."""
         deals: list[Tuple[float, Optional[float]]] = []
         seen_prices: set[float] = set()
 
@@ -291,6 +343,8 @@ class ZooplusScraper(BaseScraper):
                 continue
             parsed = self._parse_price_value(value)
             if parsed is None or parsed in seen_prices:
+                continue
+            if list_price is not None and self._is_standard_abo_price(parsed, list_price):
                 continue
             if not self._trusted_discount(parsed, list_price):
                 continue
@@ -376,8 +430,12 @@ class ZooplusScraper(BaseScraper):
             chunk = blob[max(0, match.start() - 1500) : match.end() + 500]
             if variant_id not in chunk and f'"articleId":"{variant_id}"' not in chunk:
                 continue
+            if self._json_chunk_is_abo_context(chunk):
+                continue
             parsed = self._parse_price_value(int(match.group(1)))
             if parsed is None or parsed in seen:
+                continue
+            if list_price is not None and self._is_standard_abo_price(parsed, list_price):
                 continue
             if list_price is not None and not self._trusted_discount(parsed, list_price):
                 continue
@@ -389,20 +447,14 @@ class ZooplusScraper(BaseScraper):
     def _einzel_delivery_price(
         self, soup: BeautifulSoup
     ) -> Tuple[Optional[float], Optional[float]]:
-        text = self._page_text_before_abo(soup)
-        match = EINZEL_BLOCK_RE.search(text)
-        if match:
-            regular = parse_german_price(match.group(1))
-            discounted = parse_german_price(match.group(2))
-            if regular is not None and discounted is not None and discounted < regular:
-                return discounted, regular
-
         for node in soup.find_all(string=re.compile(r"Einzellieferung", re.IGNORECASE)):
             parent = node.parent
             for _ in range(8):
                 if parent is None:
                     break
                 block = parent.get_text(" ", strip=True)
+                if "zooplus abo" in block.lower():
+                    break
                 match = EINZEL_BLOCK_RE.search(block)
                 if match:
                     regular = parse_german_price(match.group(1))
@@ -438,33 +490,16 @@ class ZooplusScraper(BaseScraper):
         if list_price is not None and self._price_plausible(list_price, name, url):
             candidates.append((list_price, None))
 
-        if article:
-            for deal_price, deal_original in self._one_time_deals_from_article(
-                article, list_price
-            ):
-                if self._price_plausible(deal_price, name, url):
-                    candidates.append((deal_price, deal_original))
-
-        for deal_price, deal_original in self._json_discounted_prices(
-            data, variant_id, list_price
-        ):
+        for deal_price, deal_original in self._html_verified_discounts(soup, list_price):
             if self._price_plausible(deal_price, name, url):
                 candidates.append((deal_price, deal_original))
-
-        extra_price, extra_regular = self._extra_rabatt_price(soup, list_price)
-        if extra_price is not None and self._price_plausible(extra_price, name, url):
-            candidates.append((extra_price, extra_regular))
-
-        delivery_price, delivery_regular = self._einzel_delivery_price(soup)
-        if delivery_price is not None and self._price_plausible(delivery_price, name, url):
-            original = delivery_regular or list_price
-            if original is None or delivery_price < original:
-                candidates.append((delivery_price, original))
 
         if not candidates:
             return None, None
 
         best_price, best_original = min(candidates, key=lambda row: row[0])
+        if list_price is not None and self._is_standard_abo_price(best_price, list_price):
+            return list_price, None
         if (
             best_original is not None
             and best_price >= best_original

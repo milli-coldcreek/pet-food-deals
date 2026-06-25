@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .scrapers import fressnapf, zooplus, zooroyal  # noqa: F401
 
-from .config import get_telegram_config, load_products
+from .config import get_telegram_config, load_products, telegram_config_error
 from .deals import (
     deal_suppressed_reason,
     evaluate_alternative_deal,
@@ -100,6 +100,7 @@ def run(
     alerts = []
     errors = 0
     processed_multipack_urls: set[str] = set()
+    seen_multipack_deals: set[tuple[str, float, float]] = set()
 
     for index, product in enumerate(products):
         if index > 0:
@@ -224,11 +225,14 @@ def run(
                 unit = unit_pricing_from_texts(mp.price, mp.name, mp.url)
                 if not unit:
                     continue
+                mp_deal_key = (unit.label, round(unit.price_per_piece, 3), round(mp.price, 2))
                 print(
                     f"MPK [{product.name} @ {retailer}] €{mp.price:.2f} "
                     f"({unit.price_per_piece:.2f}/pc, {unit.label}) "
                     f"— {mp.name[:45]}..."
                 )
+                if mp_deal_key in seen_multipack_deals:
+                    continue
                 mp_alert = _process_multipack(
                     product,
                     mp,
@@ -236,6 +240,7 @@ def run(
                     primary_on_deal=primary_on_deal,
                 )
                 if mp_alert:
+                    seen_multipack_deals.add(mp_deal_key)
                     alerts.append(mp_alert)
                     print(
                         f"DEAL [{product.name} @ {retailer}] MPK €{mp.price:.2f} "
@@ -246,14 +251,26 @@ def run(
 
     token, chat_id = get_telegram_config()
     if alerts:
-        if token and chat_id:
-            sent = send_deal_alerts(token, chat_id, alerts)
-            print(f"Sent {sent} Telegram alert(s)")
+        config_error = telegram_config_error(token, chat_id) if token and chat_id else None
+        if token and chat_id and config_error is None:
+            try:
+                sent = send_deal_alerts(token, chat_id, alerts)
+                print(f"Sent {sent} Telegram alert(s)")
+            except RuntimeError as exc:
+                print(f"Telegram error: {exc}", file=sys.stderr)
+                print("Printing alerts instead:")
+                for alert in alerts:
+                    _safe_print("---")
+                    _safe_print(format_deal_message(alert))
+                return 1
         else:
-            print(
-                "Deals found but TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set — "
-                "printing alerts:"
-            )
+            if config_error:
+                print(config_error)
+            else:
+                print(
+                    "Deals found but TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set — "
+                    "printing alerts:"
+                )
             for alert in alerts:
                 _safe_print("---")
                 _safe_print(format_deal_message(alert))

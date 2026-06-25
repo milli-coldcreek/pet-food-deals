@@ -32,6 +32,8 @@ class ZooplusScraperPriceTests(unittest.TestCase):
         self.assertEqual(deals, [])
 
     def test_cosma_uses_list_price_without_subscription(self) -> None:
+        from bs4 import BeautifulSoup
+
         article = {
             "minArticlePriceRaw": 1749,
             "subscriptionPriceRaw": 1574,
@@ -42,6 +44,90 @@ class ZooplusScraperPriceTests(unittest.TestCase):
         prices = [list_price] + [price for price, _ in deals]
         self.assertEqual(min(prices), 15.29)
         self.assertNotIn(15.74, prices)
+
+    def test_resolve_ignores_einzel_ten_percent_without_extra_rabatt(self) -> None:
+        from bs4 import BeautifulSoup
+
+        html = (
+            "<div><span>Einzellieferung</span><span>21,99 €</span>"
+            "<span>-10%</span><span>19,79 €</span>"
+            "<span>Das zooplus Abo</span></div>"
+        )
+        soup = BeautifulSoup(html, "html.parser")
+        data = {"articleId": "1922419.2", "minArticlePriceRaw": 2199}
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="1922419.2",
+            name="Sparpaket Feringa Classic Meat Menü 12 x 400 g",
+            url="https://www.zooplus.de/shop/x?activeVariant=1922419.2",
+        )
+        self.assertEqual(price, 21.99)
+        self.assertIsNone(original)
+
+    def test_resolve_still_applies_extra_rabatt_when_advertised(self) -> None:
+        from bs4 import BeautifulSoup
+
+        html = (
+            "<div><span>15,49 €</span><span>-20% Extra-Rabatt aktivieren</span>"
+            "<span>Einzellieferung</span><span>15,49 €</span>"
+            "<span>-10%</span><span>13,94 €</span></div>"
+        )
+        soup = BeautifulSoup(html, "html.parser")
+        data = {"articleId": "113463.15", "minArticlePriceRaw": 1549}
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="113463.15",
+            name="Royal Canin Instinctive in Soße",
+            url="https://www.zooplus.de/shop/x?activeVariant=113463.15",
+        )
+        self.assertEqual(price, 12.39)
+        self.assertEqual(original, 15.49)
+
+    def test_resolve_ignores_abo_json_without_html_discount(self) -> None:
+        from bs4 import BeautifulSoup
+
+        soup = BeautifulSoup("<div><p>Regular product page</p></div>", "html.parser")
+        data = {
+            "articleId": "1922419.2",
+            "minArticlePriceRaw": 2199,
+            "discountedPriceRaw": 1979,
+            "zooplusAbo": {"discountedPriceRaw": 1979},
+        }
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="1922419.2",
+            name="Sparpaket Feringa Classic Meat Menü 12 x 400 g",
+            url="https://www.zooplus.de/shop/x?activeVariant=1922419.2",
+        )
+        self.assertEqual(price, 21.99)
+        self.assertIsNone(original)
+
+    def test_resolve_ignores_cosma_abo_discounted_raw(self) -> None:
+        from bs4 import BeautifulSoup
+
+        soup = BeautifulSoup("<div><p>Cosma</p></div>", "html.parser")
+        data = {
+            "articleId": "303001.19",
+            "minArticlePriceRaw": 1749,
+            "discountedPriceRaw": 1574,
+        }
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="303001.19",
+            name="Cosma Asia in Jelly 6 x 400 g",
+            url="https://www.zooplus.de/shop/x?activeVariant=303001.19",
+        )
+        self.assertEqual(price, 17.49)
+        self.assertIsNone(original)
+
+    def test_one_time_deals_rejects_standard_abo_ten_percent(self) -> None:
+        article = {"minArticlePriceRaw": 2199, "discountedPriceRaw": 1979}
+        deals = self.scraper._one_time_deals_from_article(article, 21.99)
+        self.assertEqual(deals, [])
 
     def test_rejects_steep_wrong_variant_discount(self) -> None:
         article = {"minArticlePriceRaw": 4399, "discountedPriceRaw": 1358}

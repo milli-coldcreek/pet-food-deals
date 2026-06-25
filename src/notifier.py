@@ -68,12 +68,26 @@ def format_deal_message(alert: DealAlert) -> str:
 
 def send_telegram_message(token: str, chat_id: str, text: str) -> None:
     url = TELEGRAM_API.format(token=token)
-    response = requests.post(
-        url,
-        json={"chat_id": chat_id, "text": text, "disable_web_page_preview": False},
-        timeout=30,
-    )
-    response.raise_for_status()
+    try:
+        response = requests.post(
+            url,
+            json={"chat_id": chat_id, "text": text, "disable_web_page_preview": False},
+            timeout=30,
+        )
+        response.raise_for_status()
+    except requests.HTTPError as exc:
+        status = exc.response.status_code if exc.response is not None else None
+        if status == 404:
+            raise RuntimeError(
+                "Telegram rejected the bot token (HTTP 404). "
+                "Check TELEGRAM_BOT_TOKEN from @BotFather — do not use the README placeholder."
+            ) from exc
+        if status == 401:
+            raise RuntimeError(
+                "Telegram rejected the bot token (HTTP 401). "
+                "Regenerate the token with @BotFather if needed."
+            ) from exc
+        raise RuntimeError(f"Telegram HTTP error {status}: {exc}") from exc
     payload = response.json()
     if not payload.get("ok"):
         raise RuntimeError(f"Telegram API error: {payload}")

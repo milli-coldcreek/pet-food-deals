@@ -36,6 +36,22 @@ def _unit_target(product: ProductWatch) -> Optional[float]:
     return target_unit_price(product.target_price, product.pack_size)
 
 
+def _meets_total_target(product: ProductWatch, price: float) -> bool:
+    if product.target_price is None:
+        return True
+    return price <= product.target_price
+
+
+def _meets_unit_target(product: ProductWatch, price: PriceResult) -> bool:
+    target_unit = _unit_target(product)
+    if target_unit is None:
+        return True
+    listing = unit_pricing_from_texts(price.price, price.name, price.url)
+    if listing is None:
+        return False
+    return listing.price_per_piece <= target_unit
+
+
 def _unit_deal_reasons(
     product: ProductWatch,
     price: PriceResult,
@@ -48,7 +64,8 @@ def _unit_deal_reasons(
         return reasons
 
     target_unit = _unit_target(product)
-    if target_unit is not None and listing.price_per_piece <= target_unit:
+    at_unit_target = target_unit is not None and listing.price_per_piece <= target_unit
+    if at_unit_target:
         reasons.append(
             f"{format_unit_price(listing)} ≤ target €{target_unit:.2f}/piece"
         )
@@ -56,9 +73,11 @@ def _unit_deal_reasons(
     if baseline_unit and baseline_unit > 0:
         drop = (baseline_unit - listing.price_per_piece) / baseline_unit * 100
         if drop >= product.min_discount_pct:
-            reasons.append(
-                f"{drop:.0f}% below unit baseline (€{baseline_unit:.2f}/piece)"
-            )
+            # Baseline drops only count when you also hit your per-piece target.
+            if target_unit is None or at_unit_target:
+                reasons.append(
+                    f"{drop:.0f}% below unit baseline (€{baseline_unit:.2f}/piece)"
+                )
 
     return reasons
 
@@ -82,19 +101,23 @@ def evaluate_deal(
     if baseline is None:
         return None, price.price, None
 
+    if not _meets_total_target(product, price.price):
+        return None, baseline, None
+
     reasons: List[str] = []
 
     if product.target_price is not None and price.price <= product.target_price:
         reasons.append(f"at or below target €{product.target_price:.2f}")
 
     drop_pct = (baseline - price.price) / baseline * 100 if baseline > 0 else 0
-    if drop_pct >= product.min_discount_pct:
+    if drop_pct >= product.min_discount_pct and _meets_total_target(product, price.price):
         reasons.append(f"{drop_pct:.0f}% below baseline (€{baseline:.2f})")
 
     if (
         price.original_price
         and price.original_price > price.price
         and price.price < baseline
+        and _meets_total_target(product, price.price)
     ):
         sale_pct = price.discount_pct or round(
             (price.original_price - price.price) / price.original_price * 100, 1
@@ -170,19 +193,23 @@ def evaluate_alternative_deal(
     if baseline is None:
         return None
 
+    if not _meets_total_target(product, price.price):
+        return None
+
     reasons: List[str] = []
 
     if product.target_price is not None and price.price <= product.target_price:
         reasons.append(f"at or below target €{product.target_price:.2f}")
 
     drop_pct = (baseline - price.price) / baseline * 100 if baseline > 0 else 0
-    if drop_pct >= product.min_discount_pct:
+    if drop_pct >= product.min_discount_pct and _meets_total_target(product, price.price):
         reasons.append(f"{drop_pct:.0f}% below this variant's baseline (€{baseline:.2f})")
 
     if (
         price.original_price
         and price.original_price > price.price
         and price.price < baseline
+        and _meets_total_target(product, price.price)
     ):
         sale_pct = price.discount_pct or round(
             (price.original_price - price.price) / price.original_price * 100, 1
@@ -236,6 +263,9 @@ def evaluate_multipack_deal(
     last_alert_unit = mp_state.get("last_alert_unit_price")
 
     if baseline_unit is None:
+        return None
+
+    if not _meets_unit_target(product, price):
         return None
 
     reasons = _unit_deal_reasons(product, price, baseline_unit=baseline_unit)
