@@ -10,60 +10,13 @@ TELEGRAM_API = "https://api.telegram.org/bot{token}/sendMessage"
 def format_deal_message(alert: DealAlert) -> str:
     product = alert.product
     price = alert.price
-    pet_prefix = f"🐾 {product.pet} — " if product.pet else ""
-
-    if alert.kind == "alternative":
-        lines = [
-            f"{pet_prefix}Variant deal (not your usual product)",
-            f"Watching: {product.name} ({product.pack_size})",
-        ]
-        if alert.primary_price is not None:
-            lines.append(
-                f"Your usual listing: €{alert.primary_price:.2f} — not on sale right now"
-            )
-        else:
-            lines.append("Your usual listing: not found / not on sale right now")
-        lines.append("")
-        lines.append(f"Alternative: {price.name}")
-        lines.append(f"{price.retailer.capitalize()}: €{price.price:.2f}")
-    elif alert.kind == "multipack":
-        lines = [
-            f"{pet_prefix}Multipack deal (different pack size)",
-            f"Watching: {product.name} ({product.pack_size})",
-        ]
-        if alert.target_unit_price is not None:
-            lines.append(f"Your target: €{alert.target_unit_price:.2f}/piece")
-        lines.append("")
-        lines.append(f"{price.name}")
-        lines.append(f"{price.retailer.capitalize()}: €{price.price:.2f} total")
-    else:
-        lines = [
-            f"{pet_prefix}{product.name} ({product.pack_size})",
-            f"{price.retailer.capitalize()}: €{price.price:.2f}",
-        ]
-
-    if product.target_price is not None and alert.kind == "standard":
-        lines.append(f"Target: €{product.target_price:.2f}")
-
-    if alert.unit_price is not None and alert.unit_label:
-        lines.append(f"Unit price: €{alert.unit_price:.2f}/piece ({alert.unit_label})")
-    if alert.target_unit_price is not None and alert.kind != "standard":
-        lines.append(f"Target unit: €{alert.target_unit_price:.2f}/piece")
-
-    if price.original_price and price.original_price > price.price:
-        discount = price.discount_pct or round(
-            (price.original_price - price.price) / price.original_price * 100, 1
-        )
-        lines.append(f"(was €{price.original_price:.2f}, -{discount:.0f}%)")
-    elif alert.baseline_price and alert.baseline_price > price.price:
-        drop = round((alert.baseline_price - price.price) / alert.baseline_price * 100, 1)
-        lines.append(f"(baseline €{alert.baseline_price:.2f}, -{drop:.0f}%)")
-
-    lines.append(f"Reason: {alert.reason}")
+    pet = product.pet or "Pet"
+    title = f"{pet} — {product.name}"
+    deal_price = f"€{price.price:.2f}"
     if not price.in_stock:
-        lines.append("⚠️ Currently out of stock")
-    lines.append(price.url)
-    return "\n".join(lines)
+        deal_price = f"{deal_price} (out of stock)"
+
+    return "\n".join([title, deal_price, price.url])
 
 
 def send_telegram_message(token: str, chat_id: str, text: str) -> None:
