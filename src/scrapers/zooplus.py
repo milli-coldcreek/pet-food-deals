@@ -16,7 +16,8 @@ PACK_TOTAL_MAX = 250.0
 
 MIN_UNIT_EUR: dict[tuple[str, int], float] = {
     ("g", 85): 0.75,
-    ("g", 400): 1.40,
+    # Allow deep Extra-Rabatt (e.g. Feringa 24× €32.19 ≈ €1.34/pc)
+    ("g", 400): 1.20,
     ("g", 800): 1.80,
 }
 
@@ -45,6 +46,17 @@ EINZEL_BLOCK_RE = re.compile(
 EXTRA_RABATT_PCT_RE = re.compile(
     r"(-?\d+)\s*%\s*Extra-Rabatt",
     re.IGNORECASE,
+)
+
+# Also matches "Aktiviert -30% Rabatt im Warenkorb"
+ACTIVATED_RABATT_PCT_RE = re.compile(
+    r"Aktiviert\s*(-?\d+)\s*%\s*Rabatt",
+    re.IGNORECASE,
+)
+
+EINZEL_SINGLE_RE = re.compile(
+    r"Einzellieferung.{0,80}?(\d{1,3}[,.]\d{2})\s*€",
+    re.IGNORECASE | re.DOTALL,
 )
 
 DISCOUNTED_RAW_RE = re.compile(r'"discountedPriceRaw"\s*:\s*(\d+)')
@@ -258,17 +270,26 @@ class ZooplusScraper(BaseScraper):
         """Only Extra-Rabatt counts as a one-time discount.
 
         Einzellieferung -10% matches zooplus Abo -10% on many products and causes
-        false alerts for Feringa/Cosma. Extra-Rabatt (-20%) is the real sale tier
-        (e.g. Royal Canin €12.39).
+        false alerts for Feringa/Cosma. Extra-Rabatt (-20%/-30%) is the real sale
+        tier (e.g. Royal Canin €12.39, Feringa €32.19).
         """
         verified: list[Tuple[float, Optional[float]]] = []
         text = soup.get_text(" ", strip=True)
-        if "extra-rabatt" not in text.lower():
+        lowered = text.lower()
+        if "extra-rabatt" not in lowered and "rabatt im warenkorb" not in lowered:
             return verified
 
         extra_price, extra_regular = self._extra_rabatt_price(soup, list_price)
         if extra_price is not None:
             verified.append((extra_price, extra_regular))
+
+        # When Extra-Rabatt is activated, Einzellieferung already shows cart price.
+        pct = self._extra_rabatt_pct(text)
+        einzel_disc, einzel_reg = self._einzel_delivery_price(soup)
+        if pct is not None and einzel_disc is not None and einzel_reg is not None:
+            expected = round(einzel_reg * (1 - pct / 100), 2)
+            if abs(expected - einzel_disc) <= PRICE_MATCH_TOLERANCE:
+                verified.append((einzel_disc, einzel_reg))
         return verified
 
     def _min_plausible_total(self, name: str, url: str) -> Optional[float]:
@@ -329,7 +350,9 @@ class ZooplusScraper(BaseScraper):
             return True
         if discounted >= list_price:
             return False
-        return discounted >= list_price * MIN_TRUSTED_DISCOUNT_RATIO
+        # Allow exact -30% after euro rounding (e.g. 45.99 → 32.19).
+        floor = list_price * MIN_TRUSTED_DISCOUNT_RATIO
+        return discounted + PRICE_MATCH_TOLERANCE >= floor
 
     def _one_time_deals_from_article(
         self, article: dict, list_price: Optional[float]
@@ -363,16 +386,44 @@ class ZooplusScraper(BaseScraper):
             pct = abs(int(match.group(1)))
             if 5 <= pct <= 50:
                 return pct
-        if not re.search(r"extra-rabatt", text, re.IGNORECASE):
+        match = ACTIVATED_RABATT_PCT_RE.search(text)
+        if match:
+            pct = abs(int(match.group(1)))
+            if 5 <= pct <= 50:
+                return pct
+        if not re.search(r"extra-rabatt|rabatt im warenkorb", text, re.IGNORECASE):
             return None
         for match in re.finditer(r"(-?\d+)\s*%", text):
             pos = match.start()
             context = text[max(0, pos - 100) : pos + 100]
-            if not re.search(r"extra-rabatt", context, re.IGNORECASE):
+            if not re.search(
+                r"extra-rabatt|rabatt im warenkorb", context, re.IGNORECASE
+            ):
                 continue
             pct = abs(int(match.group(1)))
             if 5 <= pct <= 50:
                 return pct
+        return None
+
+    def _einzel_one_time_base(self, soup: BeautifulSoup) -> Optional[float]:
+        """Einzellieferung sticker price Extra-Rabatt is applied to (e.g. €45.99)."""
+        discounted, regular = self._einzel_delivery_price(soup)
+        if regular is not None:
+            return regular
+        if discounted is not None:
+            return discounted
+        for node in soup.find_all(string=re.compile(r"Einzellieferung", re.IGNORECASE)):
+            parent = node.parent
+            for _ in range(8):
+                if parent is None:
+                    break
+                block = parent.get_text(" ", strip=True)
+                if "zooplus abo" in block.lower():
+                    break
+                match = EINZEL_SINGLE_RE.search(block)
+                if match:
+                    return parse_german_price(match.group(1))
+                parent = parent.parent
         return None
 
     def _infer_list_price(
@@ -402,23 +453,43 @@ class ZooplusScraper(BaseScraper):
     def _extra_rabatt_price(
         self, soup: BeautifulSoup, list_price: Optional[float]
     ) -> Tuple[Optional[float], Optional[float]]:
-        """Zooplus Extra-Rabatt is advertised before activation (e.g. -20% → €12.39)."""
-        if list_price is None:
+        """Zooplus Extra-Rabatt before/after activation (e.g. -30% of €45.99 → €32.19).
+
+        Apply % to the Einzellieferung offer when available — not the higher
+        "Einzeln" comparison price (49.96), which would understate the discount.
+        """
+        text = soup.get_text(" ", strip=True)
+        if (
+            "extra-rabatt" not in text.lower()
+            and "rabatt im warenkorb" not in text.lower()
+        ):
             return None, None
 
-        for text in (str(soup), soup.get_text(" ", strip=True)):
-            if "extra-rabatt" not in text.lower():
+        pct = self._extra_rabatt_pct(text)
+        if pct is None:
+            pct = self._extra_rabatt_pct(str(soup))
+        if pct is None:
+            return None, None
+
+        bases: list[float] = []
+        for candidate in (self._einzel_one_time_base(soup), list_price):
+            if candidate is not None and candidate not in bases:
+                bases.append(candidate)
+        if not bases:
+            return None, None
+
+        best: Optional[Tuple[float, float]] = None
+        for base in bases:
+            discounted = round(base * (1 - pct / 100), 2)
+            if discounted >= base:
                 continue
-            pct = self._extra_rabatt_pct(text)
-            if pct is None:
+            if not self._trusted_discount(discounted, base):
                 continue
-            discounted = round(list_price * (1 - pct / 100), 2)
-            if discounted >= list_price:
-                continue
-            if not self._trusted_discount(discounted, list_price):
-                continue
-            return discounted, list_price
-        return None, None
+            if best is None or discounted < best[0]:
+                best = (discounted, base)
+        if best is None:
+            return None, None
+        return best
 
     def _json_discounted_prices(
         self, data: Any, variant_id: str, list_price: Optional[float]

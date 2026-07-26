@@ -239,6 +239,57 @@ class ZooplusScraperPriceTests(unittest.TestCase):
         name = "Sparpaket Feringa Classic Meat Menü 24 x 400 g"
         self.assertFalse(self.scraper._price_plausible(13.58, name, ""))
         self.assertTrue(self.scraper._price_plausible(39.59, name, ""))
+        self.assertTrue(self.scraper._price_plausible(32.19, name, ""))
+
+    def test_feringa_extra_rabatt_30_percent_to_32_19(self) -> None:
+        from bs4 import BeautifulSoup
+
+        html = (
+            "<div>"
+            "<span>-7,95% Einzeln 49,96 €</span>"
+            "<span>-30% Extra-Rabatt aktivieren</span>"
+            "<div><span>Einzellieferung</span><span>45,99 €</span></div>"
+            "<div><span>zooplus Abo</span><span>-15%</span><span>39,09 €</span></div>"
+            "</div>"
+        )
+        soup = BeautifulSoup(html, "html.parser")
+        data = {"articleId": "1244114.10", "minArticlePriceRaw": 4599}
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="1244114.10",
+            name="Sparpaket Feringa Classic Meat Menü 24 x 400 g",
+            url="https://www.zooplus.de/shop/x?activeVariant=1244114.10",
+        )
+        self.assertEqual(price, 32.19)
+        self.assertEqual(original, 45.99)
+
+    def test_feringa_activated_extra_rabatt_cart_price(self) -> None:
+        from bs4 import BeautifulSoup
+
+        html = (
+            "<div>"
+            "<span>Aktiviert -30% Rabatt im Warenkorb</span>"
+            "<div><span>Einzellieferung</span>"
+            "<span>45,99 €</span><span>32,19 €</span></div>"
+            "<div><span>zooplus Abo</span><span>-15%</span><span>39,09 €</span></div>"
+            "</div>"
+        )
+        soup = BeautifulSoup(html, "html.parser")
+        data = {"articleId": "1244114.10", "minArticlePriceRaw": 4599}
+        price, original = self.scraper._resolve_price(
+            data,
+            soup=soup,
+            variant_id="1244114.10",
+            name="Sparpaket Feringa Classic Meat Menü 24 x 400 g",
+            url="https://www.zooplus.de/shop/x?activeVariant=1244114.10",
+        )
+        self.assertEqual(price, 32.19)
+        self.assertEqual(original, 45.99)
+
+    def test_trusted_discount_allows_exact_30_percent(self) -> None:
+        self.assertTrue(self.scraper._trusted_discount(32.19, 45.99))
+        self.assertTrue(self.scraper._trusted_discount(34.97, 49.96))
 
 
 if __name__ == "__main__":
