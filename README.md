@@ -2,6 +2,8 @@
 
 Free price monitor for **Fressnapf**, **Zooplus**, and **Zooroyal**. Give a **product name** and **pack size** — the tracker searches all three shops and sends **Telegram** alerts when the price hits your target. No URLs to maintain.
 
+Also in this repo: **[Wattwise](./ostrom-analytics)** — a web app for deeper Ostrom electricity consumption analytics (demo mode + live API).
+
 ## Quick start
 
 ### 1. Add your products

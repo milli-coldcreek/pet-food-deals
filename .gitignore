@@ -17,3 +17,10 @@ _diag_inline.py
 # OS
 .DS_Store
 Thumbs.db
+
+# Node / Next.js (ostrom-analytics)
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
