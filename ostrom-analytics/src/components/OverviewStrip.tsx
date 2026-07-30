@@ -7,25 +7,32 @@ interface Props {
   stats: SummaryStats;
 }
 
+function euros(n: number) {
+  return `${n.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} €`;
+}
+
 export function OverviewStrip({ stats }: Props) {
   const items = [
     {
       label: "Total use",
       value: `${stats.totalKwh.toLocaleString("de-DE")} kWh`,
+      hint: null as string | null,
     },
     {
-      label: "Est. energy cost",
-      value:
-        stats.totalCostEur == null
-          ? "—"
-          : `${stats.totalCostEur.toLocaleString("de-DE", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })} €`,
+      label: "Est. total cost",
+      value: stats.totalCostEur == null ? "—" : euros(stats.totalCostEur),
+      hint:
+        stats.variableCostEur != null && stats.fixedCostEur != null
+          ? `${euros(stats.variableCostEur)} energy + ${euros(stats.fixedCostEur)} fixed`
+          : null,
     },
     {
       label: "Avg / day",
       value: `${stats.avgDailyKwh.toLocaleString("de-DE")} kWh`,
+      hint: null,
     },
     {
       label: "Avg price",
@@ -33,6 +40,7 @@ export function OverviewStrip({ stats }: Props) {
         stats.avgPriceCt == null
           ? "—"
           : `${stats.avgPriceCt.toLocaleString("de-DE")} ct/kWh`,
+      hint: null,
     },
   ];
 
@@ -42,6 +50,7 @@ export function OverviewStrip({ stats }: Props) {
         <div key={item.label} className={styles.item}>
           <p className={styles.label}>{item.label}</p>
           <p className={styles.value}>{item.value}</p>
+          {item.hint && <p className={styles.hint}>{item.hint}</p>}
         </div>
       ))}
     </section>

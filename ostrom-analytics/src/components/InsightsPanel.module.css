@@ -48,6 +48,18 @@
   font-size: 0.95rem;
 }
 
+.item a {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.item code {
+  font-size: 0.82em;
+  background: rgba(11, 79, 74, 0.08);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.3rem;
+}
+
 .item strong {
   color: var(--ink);
   font-weight: 650;

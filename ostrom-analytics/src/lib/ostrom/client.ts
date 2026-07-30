@@ -124,7 +124,19 @@ export async function getSpotPrices(
   return data.data ?? [];
 }
 
-/** Gross customer price in ct/kWh (spot + taxes/levies). */
+/**
+ * Variable energy price in ct/kWh (incl. VAT), per Ostrom docs:
+ * https://docs.ostrom-api.io/docs/fetching-prices
+ * total variable = (grossKwhPrice + grossKwhTaxAndLevies) * kWh
+ */
 export function grossPriceCt(p: SpotPricePoint): number {
   return p.grossKwhPrice + p.grossKwhTaxAndLevies;
+}
+
+/**
+ * Monthly fixed costs in EUR (incl. VAT), per Ostrom docs:
+ * grossMonthlyOstromBaseFee + grossMonthlyGridFees
+ */
+export function monthlyFixedFeesEur(p: SpotPricePoint): number {
+  return p.grossMonthlyOstromBaseFee + p.grossMonthlyGridFees;
 }

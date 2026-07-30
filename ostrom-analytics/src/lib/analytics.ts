@@ -1,5 +1,5 @@
 import { format, getDay, getHours, parseISO } from "date-fns";
-import { grossPriceCt } from "./ostrom/client";
+import { grossPriceCt, monthlyFixedFeesEur } from "./ostrom/client";
 import type {
   ConsumptionPoint,
   EnrichedPoint,
@@ -19,6 +19,7 @@ export function enrichSeries(
   return consumption.map((c) => {
     const key = hourKey(c.date);
     const priceCt = priceMap.get(key) ?? null;
+    // Variable cost only: (grossKwhPrice + grossKwhTaxAndLevies) * kWh / 100
     const costEur =
       priceCt == null ? null : Math.round(((c.kWh * priceCt) / 100) * 10000) / 10000;
     return {
@@ -38,11 +39,18 @@ function hourKey(iso: string): string {
 
 export interface SummaryStats {
   totalKwh: number;
+  /** Variable energy cost only (spot + taxes/levies × kWh). */
+  variableCostEur: number | null;
+  /** Prorated fixed fees for the selected window. */
+  fixedCostEur: number | null;
+  /** variableCostEur + fixedCostEur when either is known. */
   totalCostEur: number | null;
+  monthlyFixedEur: number | null;
   avgDailyKwh: number;
   peakKwh: number;
   peakAt: string | null;
   avgPriceCt: number | null;
+  daysCovered: number;
   cheapestHour: { hour: number; avgKwh: number; avgPriceCt: number | null } | null;
   mostExpensiveHour: {
     hour: number;
@@ -53,24 +61,31 @@ export interface SummaryStats {
   costCoveragePct: number;
 }
 
-export function summarize(points: EnrichedPoint[]): SummaryStats {
-  if (points.length === 0) {
-    return {
-      totalKwh: 0,
-      totalCostEur: null,
-      avgDailyKwh: 0,
-      peakKwh: 0,
-      peakAt: null,
-      avgPriceCt: null,
-      cheapestHour: null,
-      mostExpensiveHour: null,
-      hoursCovered: 0,
-      costCoveragePct: 0,
-    };
-  }
+export function summarize(
+  points: EnrichedPoint[],
+  prices: SpotPricePoint[] = [],
+): SummaryStats {
+  const empty: SummaryStats = {
+    totalKwh: 0,
+    variableCostEur: null,
+    fixedCostEur: null,
+    totalCostEur: null,
+    monthlyFixedEur: null,
+    avgDailyKwh: 0,
+    peakKwh: 0,
+    peakAt: null,
+    avgPriceCt: null,
+    daysCovered: 0,
+    cheapestHour: null,
+    mostExpensiveHour: null,
+    hoursCovered: 0,
+    costCoveragePct: 0,
+  };
+
+  if (points.length === 0) return empty;
 
   let totalKwh = 0;
-  let totalCost = 0;
+  let variableCost = 0;
   let costPoints = 0;
   let priceSum = 0;
   let peakKwh = -1;
@@ -79,7 +94,7 @@ export function summarize(points: EnrichedPoint[]): SummaryStats {
   for (const p of points) {
     totalKwh += p.kWh;
     if (p.costEur != null && p.priceCt != null) {
-      totalCost += p.costEur;
+      variableCost += p.costEur;
       costPoints += 1;
       priceSum += p.priceCt;
     }
@@ -92,7 +107,24 @@ export function summarize(points: EnrichedPoint[]): SummaryStats {
   const dayKeys = new Set(
     points.map((p) => format(parseISO(p.date), "yyyy-MM-dd")),
   );
-  const avgDailyKwh = totalKwh / Math.max(dayKeys.size, 1);
+  const daysCovered = dayKeys.size;
+  const avgDailyKwh = totalKwh / Math.max(daysCovered, 1);
+
+  const feeSample = prices.find(
+    (p) => p.grossMonthlyOstromBaseFee > 0 || p.grossMonthlyGridFees > 0,
+  );
+  const monthlyFixedEur = feeSample ? round(monthlyFixedFeesEur(feeSample), 2) : null;
+  // Prorate monthly fixed fees across the selected calendar days (~30-day month).
+  const fixedCostEur =
+    monthlyFixedEur == null
+      ? null
+      : round((monthlyFixedEur * daysCovered) / 30, 2);
+
+  const variableCostEur = costPoints ? round(variableCost, 2) : null;
+  let totalCostEur: number | null = null;
+  if (variableCostEur != null || fixedCostEur != null) {
+    totalCostEur = round((variableCostEur ?? 0) + (fixedCostEur ?? 0), 2);
+  }
 
   const byHour = hourlyAverages(points);
   const withPrice = byHour.filter((h) => h.avgPriceCt != null);
@@ -115,11 +147,15 @@ export function summarize(points: EnrichedPoint[]): SummaryStats {
 
   return {
     totalKwh: round(totalKwh, 2),
-    totalCostEur: costPoints ? round(totalCost, 2) : null,
+    variableCostEur,
+    fixedCostEur,
+    totalCostEur,
+    monthlyFixedEur,
     avgDailyKwh: round(avgDailyKwh, 2),
     peakKwh: round(peakKwh, 3),
     peakAt,
     avgPriceCt: costPoints ? round(priceSum / costPoints, 2) : null,
+    daysCovered,
     cheapestHour,
     mostExpensiveHour,
     hoursCovered: points.length,

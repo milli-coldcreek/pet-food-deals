@@ -60,7 +60,15 @@ export function ConnectScreen({ onDemo, onConnect }: Props) {
         {showForm && (
           <form className={styles.form} onSubmit={submit}>
             <p className={styles.help}>
-              Create API credentials at{" "}
+              Follow the{" "}
+              <a
+                href="https://docs.ostrom-api.io/docs/getting-started"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ostrom getting started
+              </a>{" "}
+              guide: sign in at{" "}
               <a
                 href="https://developer.ostrom-api.io/"
                 target="_blank"
@@ -68,7 +76,8 @@ export function ConnectScreen({ onDemo, onConnect }: Props) {
               >
                 developer.ostrom-api.io
               </a>{" "}
-              (same login as the Ostrom app).
+              with your Ostrom app account, create a Production client, then
+              paste the credentials below.
             </p>
             <label>
               Client ID

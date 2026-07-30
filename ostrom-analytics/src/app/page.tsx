@@ -169,7 +169,7 @@ export default function Home() {
     () => (view === "day" ? aggregateDaily(enriched) : enriched),
     [enriched, view],
   );
-  const stats = useMemo(() => summarize(enriched), [enriched]);
+  const stats = useMemo(() => summarize(enriched, prices), [enriched, prices]);
   const hours = useMemo(() => hourlyAverages(enriched), [enriched]);
   const heat = useMemo(() => heatmap(enriched), [enriched]);
   const insights = useMemo(() => loadShiftInsights(enriched), [enriched]);
@@ -292,6 +292,7 @@ export default function Home() {
 
         <InsightsPanel
           insights={insights}
+          stats={stats}
           peakAt={
             stats.peakAt
               ? format(parseISO(stats.peakAt), "EEE d MMM · HH:mm")
@@ -304,7 +305,15 @@ export default function Home() {
       <footer className={styles.footer}>
         <p>
           Credentials stay in your browser session and are only forwarded to Ostrom
-          via this app&apos;s proxy. Not affiliated with Ostrom.
+          via this app&apos;s proxy. Built against the{" "}
+          <a
+            href="https://docs.ostrom-api.io/docs/getting-started"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Ostrom API docs
+          </a>
+          . Not affiliated with Ostrom.
         </p>
       </footer>
     </div>

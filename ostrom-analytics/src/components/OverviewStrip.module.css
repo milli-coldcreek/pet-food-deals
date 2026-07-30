@@ -36,6 +36,13 @@
   line-height: 1.15;
 }
 
+.hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 @keyframes fade {
   from {
     opacity: 0;
