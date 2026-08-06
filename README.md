@@ -54,9 +54,28 @@ python -m src.main
 
 Each shop is checked independently — you get an alert for whichever hits your target first.
 
-### 4. Schedule with GitHub Actions (free)
+### 4. Deals website
 
-Push to GitHub, add Telegram secrets, and the workflow runs twice daily. See [`.github/workflows/check-prices.yml`](.github/workflows/check-prices.yml).
+After each price check, a static board is written to [`docs/index.html`](docs/index.html):
+
+```powershell
+python -m src.site
+```
+
+To publish it on GitHub Pages:
+
+1. Repo **Settings → Pages**
+2. Source: **Deploy from a branch**
+3. Branch: `main` / folder: `/docs`
+
+Then open:
+`https://milli-coldcreek.github.io/pet-food-deals/`
+
+The page lists each watched product with current shop prices and highlights deals (at or below your target). It updates whenever the Actions workflow runs.
+
+### 5. Schedule with GitHub Actions (free)
+
+Push to GitHub, add Telegram secrets, and the workflow runs twice daily. See [`.github/workflows/check-prices.yml`](.github/workflows/check-prices.yml). It also regenerates the deals website.
 
 ## How matching works
 

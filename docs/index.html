@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pet Food Deals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #e8f0e6;
+      --bg1: #d5e4d8;
+      --ink: #1c2a22;
+      --muted: #5a6b60;
+      --line: rgba(28, 42, 34, 0.12);
+      --deal: #1f6b45;
+      --deal-soft: rgba(31, 107, 69, 0.12);
+      --miss: #8a9590;
+      --panel: rgba(255, 252, 247, 0.72);
+      --shadow: 0 18px 50px rgba(28, 42, 34, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Outfit", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #f7ffe9 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #cfe3d4 0%, transparent 50%),
+        linear-gradient(165deg, var(--bg0), var(--bg1));
+    }
+    .wrap {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2.5rem 0 4rem;
+    }
+    .hero {
+      margin-bottom: 2.25rem;
+      animation: rise 0.7s ease both;
+    }
+    .brand {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 0.6rem;
+    }
+    .lede {
+      margin: 0;
+      max-width: 34rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      margin-top: 1.25rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .stats strong { color: var(--ink); font-weight: 600; }
+    .pet {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.35rem;
+      margin: 2rem 0 0.85rem;
+      animation: rise 0.6s ease both;
+    }
+    .product {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem 1.5rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--line);
+      animation: rise 0.55s ease both;
+    }
+    .product:last-child { border-bottom: 1px solid var(--line); }
+    .product--deal {
+      background: linear-gradient(90deg, var(--deal-soft), transparent 70%);
+      margin: 0 -0.75rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      border-radius: 12px;
+      border-top-color: transparent;
+    }
+    .product__name {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .product__meta {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .dot { margin: 0 0.35rem; opacity: 0.6; }
+    .product__offers {
+      display: grid;
+      gap: 0.45rem;
+      align-content: center;
+    }
+    .offer {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.95rem;
+    }
+    .shop { color: var(--muted); min-width: 5.5rem; }
+    .price { font-variant-numeric: tabular-nums; font-weight: 500; }
+    .offer--deal .price { color: var(--deal); font-weight: 600; }
+    .offer--miss .price { color: var(--miss); }
+    .price-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .price-link:hover { border-bottom-color: currentColor; }
+    .badge {
+      display: inline-block;
+      margin-left: 0.45rem;
+      padding: 0.08rem 0.4rem;
+      border-radius: 999px;
+      background: var(--deal);
+      color: #f4fff8;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+    .empty { color: var(--muted); }
+    footer {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 700px) {
+      .product { grid-template-columns: 1fr; gap: 0.75rem; }
+      .wrap { padding-top: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1 class="brand">Pet Food Deals</h1>
+      <p class="lede">Current prices for your watched products. Deals are at or below your target.</p>
+      <div class="stats">
+        <span><strong>4</strong> deals right now</span>
+        <span>Last shop check: <strong>26 Jul 2026, 11:17</strong></span>
+        <span>Page built: <strong>06 Aug 2026, 11:03 W. Europe Daylight Time</strong></span>
+      </div>
+    </header>
+    <section class="board">
+      <h2 class="pet">Cats</h2>
+<article class="product product--deal"><div class="product__main"><h3 class="product__name">PREMIERE Carbon Control Multi-Cat Klumpstreu Katze 12 l</h3><p class="product__meta"><span>12l</span><span class="dot">·</span><span>target €16.00</span></p></div><div class="product__offers"><div class="offer offer--deal"><span class="shop">Fressnapf</span><span class="price">€14.99<span class="badge">deal</span></span></div><div class="offer offer--miss"><span class="shop">Zooplus</span><span class="price">—</span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product product--deal"><div class="product__main"><h3 class="product__name">Royal Canin Ageing 11+ in Soße</h3><p class="product__meta"><span>12x85g</span><span class="dot">·</span><span>target €15.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/royal-canin-nassfutter-katze-senior-ageing-11-sauce-12x85-g-2288289" target="_blank" rel="noopener noreferrer">€16.49</a></span></div><div class="offer offer--deal"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/2424913?activeVariant=2424913.0" target="_blank" rel="noopener noreferrer">€13.19</a><span class="badge">deal</span></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product product--deal"><div class="product__main"><h3 class="product__name">Royal Canin Instinctive 7+ in Soße</h3><p class="product__meta"><span>12x85g</span><span class="dot">·</span><span>target €15.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464/" target="_blank" rel="noopener noreferrer">€15.29</a></span></div><div class="offer offer--deal"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.10" target="_blank" rel="noopener noreferrer">€12.23</a><span class="badge">deal</span></span></div><div class="offer offer--deal"><span class="shop">Zooroyal</span><span class="price"><a class="price-link" href="https://www.zooroyal.de/p/royal-canin-instinctive-7-nassfutter-in-sosse-fuer-aeltere-katzen-12x85g/1000076863/" target="_blank" rel="noopener noreferrer">€5.31</a><span class="badge">deal</span></span></div></div></article>
+<article class="product product--deal"><div class="product__main"><h3 class="product__name">Royal Canin Instinctive in Soße</h3><p class="product__meta"><span>12x85g</span><span class="dot">·</span><span>target €15.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/royal-canin-instinctive-adult-in-sosse-12x85-g-1099135" target="_blank" rel="noopener noreferrer">€15.49</a></span></div><div class="offer offer--deal"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_adult/113463?activeVariant=113463.15" target="_blank" rel="noopener noreferrer">€12.39</a><span class="badge">deal</span></span></div><div class="offer offer--ok"><span class="shop">Zooroyal</span><span class="price"><a class="price-link" href="https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/" target="_blank" rel="noopener noreferrer">€76.80</a></span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">animonda Integra Protect Adult Sensitive</h3><p class="product__meta"><span>12x85g</span><span class="dot">·</span><span>target €8.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--miss"><span class="shop">Zooplus</span><span class="price">—</span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">animonda Integra Protect Adult Sensitive</h3><p class="product__meta"><span>24x100g</span><span class="dot">·</span><span>target €26.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/593144?activeVariant=593144.5" target="_blank" rel="noopener noreferrer">€29.49</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">animonda Integra Protect Adult Sensitive</h3><p class="product__meta"><span>24x85g</span><span class="dot">·</span><span>target €16.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-24x85-g-1808860" target="_blank" rel="noopener noreferrer">€18.79</a></span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903432?activeVariant=1903432.0" target="_blank" rel="noopener noreferrer">€18.79</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">animonda Integra Protect Adult Sensitive</h3><p class="product__meta"><span>6x100g</span><span class="dot">·</span><span>target €7.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-6x100g-huhn-pur-1338369" target="_blank" rel="noopener noreferrer">€7.79</a></span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/592421?activeVariant=592421.4" target="_blank" rel="noopener noreferrer">€7.79</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">Cosma Asia in Jelly</h3><p class="product__meta"><span>12x400g</span><span class="dot">·</span><span>target €15.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303003?activeVariant=303003.26" target="_blank" rel="noopener noreferrer">€30.99</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">Feringa Classic Meat Menü</h3><p class="product__meta"><span>12x400g</span><span class="dot">·</span><span>target €20.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.0" target="_blank" rel="noopener noreferrer">€21.99</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">Feringa Classic Meat Menü</h3><p class="product__meta"><span>24x400g</span><span class="dot">·</span><span>target €40.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.5" target="_blank" rel="noopener noreferrer">€43.99</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">Feringa Classic Meat Menü</h3><p class="product__meta"><span>6x400g</span><span class="dot">·</span><span>target €10.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.9" target="_blank" rel="noopener noreferrer">€10.62</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">PREMIERE Excellent Klumpstreu Katze 12 kg</h3><p class="product__meta"><span>12kg</span><span class="dot">·</span><span>target €14.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/premiere-excellent-xl-klumpstreu-katze-12-kg-1237777" target="_blank" rel="noopener noreferrer">€14.99</a></span></div><div class="offer offer--miss"><span class="shop">Zooplus</span><span class="price">—</span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<article class="product"><div class="product__main"><h3 class="product__name">Royal Canin Ageing 15+ in Soße</h3><p class="product__meta"><span>12x85g</span><span class="dot">·</span><span>target €15.00</span></p></div><div class="product__offers"><div class="offer offer--miss"><span class="shop">Fressnapf</span><span class="price">—</span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price"><a class="price-link" href="https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/2423844?activeVariant=2423844.0" target="_blank" rel="noopener noreferrer">€16.49</a></span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+<h2 class="pet">Dogs</h2>
+<article class="product"><div class="product__main"><h3 class="product__name">PREMIERE Meati Nassfutter Hund</h3><p class="product__meta"><span>6x800g</span><span class="dot">·</span><span>target €13.00</span></p></div><div class="product__offers"><div class="offer offer--ok"><span class="shop">Fressnapf</span><span class="price"><a class="price-link" href="https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-rind-6x800-g-1210276" target="_blank" rel="noopener noreferrer">€14.94</a></span></div><div class="offer offer--ok"><span class="shop">Zooplus</span><span class="price">€21.99</span></div><div class="offer offer--miss"><span class="shop">Zooroyal</span><span class="price">—</span></div></div></article>
+    </section>
+    <footer>Telegram alerts still fire on new deals. This page refreshes when the price checker runs.</footer>
+  </main>
+</body>
+</html>
