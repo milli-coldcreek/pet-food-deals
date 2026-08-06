@@ -2,8 +2,8 @@ name: Check pet food prices
 
 on:
   schedule:
-    # 07:00 and 17:00 UTC ≈ 08:00 and 18:00 CET (winter)
-    - cron: "0 7,17 * * *"
+    # Every 3 hours — Extra-Rabatt deals often disappear within a day
+    - cron: "0 */3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
         run: python -m src.main
 
       - name: Generate deals website
-        run: python -m src.site
+        run: python -m src.site --verify-deals
 
       - name: Commit updated state and site
         run: |

@@ -1,6 +1,7 @@
 """Generate a static deals board from products.yaml + state.json."""
 from __future__ import annotations
 
+import argparse
 import html
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -9,10 +10,15 @@ from typing import Any, Dict, List, Optional
 
 from .config import load_products
 from .models import ProductWatch
-from .storage import DEFAULT_STATE_PATH, load_state
+from .scrapers import fressnapf, zooplus, zooroyal  # noqa: F401
+from .scrapers.base import fetch_price
+from .storage import DEFAULT_STATE_PATH, load_state, save_state
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SITE_PATH = ROOT / "docs" / "index.html"
+
+# Extra-Rabatt deals can vanish within hours — only badge fresh checks.
+FRESH_DEAL_HOURS = 6
 
 
 @dataclass
@@ -23,6 +29,20 @@ class RetailerPrice:
     name: str
     is_deal: bool
     last_checked: str = ""
+    stale: bool = False
+
+    @property
+    def age_label(self) -> str:
+        age = _age_hours(self.last_checked)
+        if age is None:
+            return ""
+        if age < 1:
+            return "just now"
+        if age < 24:
+            hours = int(age)
+            return f"{hours}h ago"
+        days = int(age // 24)
+        return f"{days}d ago"
 
 
 @dataclass
@@ -43,12 +63,41 @@ class ProductBoardRow:
         return min(prices) if prices else None
 
 
+def _parse_checked(value: str) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _age_hours(last_checked: str, *, now: Optional[datetime] = None) -> Optional[float]:
+    dt = _parse_checked(last_checked)
+    if dt is None:
+        return None
+    now = now or datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return max(0.0, (now - dt).total_seconds() / 3600.0)
+
+
+def _is_fresh(last_checked: str, *, now: Optional[datetime] = None) -> bool:
+    age = _age_hours(last_checked, now=now)
+    if age is None:
+        return False
+    return age <= FRESH_DEAL_HOURS
+
+
 def build_board(
     products: List[ProductWatch] | None = None,
     state: Dict[str, Any] | None = None,
+    *,
+    now: Optional[datetime] = None,
 ) -> List[ProductBoardRow]:
     products = products if products is not None else load_products()
     state = state if state is not None else load_state()
+    now = now or datetime.now(timezone.utc)
     rows: List[ProductBoardRow] = []
 
     for product in products:
@@ -67,19 +116,22 @@ def build_board(
                 or product.url
                 or ""
             )
-            is_deal = (
+            checked = str(entry.get("last_checked") or "")
+            at_target = (
                 price_val is not None
                 and product.target_price is not None
                 and price_val <= product.target_price
             )
+            fresh = _is_fresh(checked, now=now)
             retailers.append(
                 RetailerPrice(
                     retailer=retailer,
                     price=price_val,
                     url=url,
                     name=entry.get("matched_name") or "",
-                    is_deal=is_deal,
-                    last_checked=str(entry.get("last_checked") or ""),
+                    is_deal=at_target and fresh,
+                    last_checked=checked,
+                    stale=at_target and not fresh,
                 )
             )
         rows.append(
@@ -101,6 +153,46 @@ def build_board(
         )
     )
     return rows
+
+
+def verify_deal_offers(
+    state: Dict[str, Any],
+    products: List[ProductWatch] | None = None,
+) -> int:
+    """Re-scrape URLs that currently look like deals so the site stays accurate."""
+    products = products if products is not None else load_products()
+    updated = 0
+    now = datetime.now(timezone.utc).isoformat()
+
+    for product in products:
+        if product.target_price is None:
+            continue
+        for retailer in product.retailers:
+            key = product.state_key(retailer)
+            entry = state.get(key) or {}
+            price = entry.get("last_price")
+            url = entry.get("matched_url") or (product.retailer_urls or {}).get(retailer)
+            if not url or not isinstance(price, (int, float)):
+                continue
+            if float(price) > product.target_price:
+                continue
+            try:
+                result = fetch_price(url)
+            except Exception as exc:
+                print(f"VERIFY skip [{product.name} @ {retailer}]: {exc}")
+                continue
+            entry["last_price"] = result.price
+            entry["last_checked"] = now
+            if result.name:
+                entry["matched_name"] = result.name
+            entry["matched_url"] = result.url or url
+            state[key] = entry
+            updated += 1
+            print(
+                f"VERIFY [{product.name} @ {retailer}] "
+                f"€{float(price):.2f} → €{result.price:.2f}"
+            )
+    return updated
 
 
 def _fmt_price(value: Optional[float]) -> str:
@@ -144,7 +236,14 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
         target = _fmt_price(row.target_price)
         retailer_bits: List[str] = []
         for offer in row.retailers:
-            status = "deal" if offer.is_deal else ("ok" if offer.price is not None else "miss")
+            if offer.is_deal:
+                status = "deal"
+            elif offer.stale:
+                status = "stale"
+            elif offer.price is not None:
+                status = "ok"
+            else:
+                status = "miss"
             label = offer.retailer.capitalize()
             price_txt = _fmt_price(offer.price)
             if offer.url:
@@ -154,11 +253,23 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
                 )
             else:
                 price_html = price_txt
-            badge = '<span class="badge">deal</span>' if offer.is_deal else ""
+            if offer.is_deal:
+                badge = '<span class="badge">deal</span>'
+            elif offer.stale:
+                badge = '<span class="badge badge--stale">was deal</span>'
+            else:
+                badge = ""
+            age = offer.age_label
+            age_html = (
+                f'<span class="age" title="{html.escape(offer.last_checked)}">'
+                f"{html.escape(age)}</span>"
+                if age
+                else ""
+            )
             retailer_bits.append(
                 f'<div class="offer offer--{status}">'
                 f'<span class="shop">{html.escape(label)}</span>'
-                f'<span class="price">{price_html}{badge}</span>'
+                f'<span class="price">{price_html}{badge}{age_html}</span>'
                 f"</div>"
             )
 
@@ -196,9 +307,8 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
       --line: rgba(28, 42, 34, 0.12);
       --deal: #1f6b45;
       --deal-soft: rgba(31, 107, 69, 0.12);
+      --stale: #8a6a2f;
       --miss: #8a9590;
-      --panel: rgba(255, 252, 247, 0.72);
-      --shadow: 0 18px 50px rgba(28, 42, 34, 0.08);
     }}
     * {{ box-sizing: border-box; }}
     body {{
@@ -230,7 +340,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
     }}
     .lede {{
       margin: 0;
-      max-width: 34rem;
+      max-width: 36rem;
       color: var(--muted);
       font-size: 1.05rem;
       line-height: 1.5;
@@ -293,6 +403,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
     .shop {{ color: var(--muted); min-width: 5.5rem; }}
     .price {{ font-variant-numeric: tabular-nums; font-weight: 500; }}
     .offer--deal .price {{ color: var(--deal); font-weight: 600; }}
+    .offer--stale .price {{ color: var(--stale); }}
     .offer--miss .price {{ color: var(--miss); }}
     .price-link {{
       color: inherit;
@@ -314,6 +425,17 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
       text-transform: uppercase;
       vertical-align: middle;
     }}
+    .badge--stale {{
+      background: transparent;
+      color: var(--stale);
+      border: 1px solid rgba(138, 106, 47, 0.45);
+    }}
+    .age {{
+      margin-left: 0.45rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 400;
+    }}
     .empty {{ color: var(--muted); }}
     footer {{
       margin-top: 2.5rem;
@@ -334,9 +456,9 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
   <main class="wrap">
     <header class="hero">
       <h1 class="brand">Pet Food Deals</h1>
-      <p class="lede">Current prices for your watched products. Deals are at or below your target.</p>
+      <p class="lede">Fresh prices for your watched products. Deal badges only show when the shop was checked within the last {FRESH_DEAL_HOURS} hours — Extra-Rabatt can end anytime.</p>
       <div class="stats">
-        <span><strong>{deal_count}</strong> deal{'s' if deal_count != 1 else ''} right now</span>
+        <span><strong>{deal_count}</strong> fresh deal{'s' if deal_count != 1 else ''}</span>
         <span>Last shop check: <strong>{html.escape(checked)}</strong></span>
         <span>Page built: <strong>{html.escape(generated)}</strong></span>
       </div>
@@ -344,7 +466,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
     <section class="board">
       {body}
     </section>
-    <footer>Telegram alerts still fire on new deals. This page refreshes when the price checker runs.</footer>
+    <footer>Telegram alerts still fire on new deals. Prices are re-checked about every 3 hours; open a link soon after a fresh deal badge.</footer>
   </main>
 </body>
 </html>
@@ -356,19 +478,35 @@ def write_site(
     *,
     products: List[ProductWatch] | None = None,
     state: Dict[str, Any] | None = None,
+    verify_deals: bool = False,
+    state_path: Path | None = None,
 ) -> Path:
     out = path or DEFAULT_SITE_PATH
     out.parent.mkdir(parents=True, exist_ok=True)
+    products = products if products is not None else load_products()
+    state = state if state is not None else load_state(state_path)
+    if verify_deals:
+        changed = verify_deal_offers(state, products)
+        if changed:
+            save_state(state, state_path)
+            print(f"Verified {changed} deal offer(s)")
     rows = build_board(products=products, state=state)
     out.write_text(render_html(rows), encoding="utf-8")
     return out
 
 
 def main() -> None:
-    path = write_site()
+    parser = argparse.ArgumentParser(description="Generate the pet food deals website")
+    parser.add_argument(
+        "--verify-deals",
+        action="store_true",
+        help="Re-scrape current deal URLs before building the page",
+    )
+    args = parser.parse_args()
+    path = write_site(verify_deals=args.verify_deals)
     rows = build_board()
     deals = sum(1 for row in rows if row.has_deal)
-    print(f"Wrote {path} ({len(rows)} products, {deals} with deals)")
+    print(f"Wrote {path} ({len(rows)} products, {deals} fresh deals)")
 
 
 if __name__ == "__main__":

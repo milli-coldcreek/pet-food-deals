@@ -59,8 +59,12 @@ Each shop is checked independently — you get an alert for whichever hits your 
 After each price check, a static board is written to [`docs/index.html`](docs/index.html):
 
 ```powershell
-python -m src.site
+python -m src.site --verify-deals
 ```
+
+`--verify-deals` re-scrapes any offers that currently look like deals before publishing, so the page doesn’t keep dead Extra-Rabatt links.
+
+Deal badges only appear when the shop was checked within the last **6 hours**. Older hits show as **was deal**.
 
 To publish it on GitHub Pages:
 
@@ -71,11 +75,9 @@ To publish it on GitHub Pages:
 Then open:
 `https://milli-coldcreek.github.io/pet-food-deals/`
 
-The page lists each watched product with current shop prices and highlights deals (at or below your target). It updates whenever the Actions workflow runs.
-
 ### 5. Schedule with GitHub Actions (free)
 
-Push to GitHub, add Telegram secrets, and the workflow runs twice daily. See [`.github/workflows/check-prices.yml`](.github/workflows/check-prices.yml). It also regenerates the deals website.
+Push to GitHub, add Telegram secrets, and the workflow runs **every 3 hours**. See [`.github/workflows/check-prices.yml`](.github/workflows/check-prices.yml). It also regenerates and re-verifies the deals website.
 
 ## How matching works
 

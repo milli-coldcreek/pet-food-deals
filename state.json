@@ -3,7 +3,7 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-instinctive-adult-in-sosse-12x85-g-1099135",
     "matched_name": "ROYAL CANIN Instinctive Adult in Soße 12x85 g",
     "last_price": 13.17,
-    "last_checked": "2026-08-06T09:32:51.579791+00:00",
+    "last_checked": "2026-08-06T12:15:52.391915+00:00",
     "baseline_price": 15.49,
     "multipacks": {
       "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464": {
@@ -71,8 +71,8 @@
   "royal-canin-instinctive-in-so-e|12x85g|zooroyal": {
     "matched_url": "https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/",
     "matched_name": "ROYAL CANIN INSTINCTIVE Katzenfutter nass in Soße - 12x85g",
-    "last_price": 3.71,
-    "last_checked": "2026-08-06T09:33:31.384336+00:00",
+    "last_price": 15.49,
+    "last_checked": "2026-08-06T12:15:52.391915+00:00",
     "baseline_price": 76.8,
     "baseline_unit_price": 6.3999999999999995
   },
@@ -271,7 +271,7 @@
   "feringa-classic-meat-men|24x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.5",
     "matched_name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g",
-    "last_checked": "2026-08-06T09:35:08.799498+00:00",
+    "last_checked": "2026-08-06T12:15:52.391915+00:00",
     "alternatives": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/saison_menu/1408319?activeVariant=1408319.1": {
         "baseline_price": 49.96,
@@ -628,7 +628,7 @@
     "matched_url": "https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-schinken-6x800-g-1322940",
     "matched_name": "PREMIERE Meati Nassfutter Hund, Adult, Schinken 6x800 g",
     "last_price": 11.34,
-    "last_checked": "2026-08-06T09:40:07.581954+00:00",
+    "last_checked": "2026-08-06T12:15:52.391915+00:00",
     "baseline_price": 12.48,
     "last_alert_price": 11.34
   },
@@ -753,7 +753,7 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-nassfutter-katze-senior-ageing-11-sauce-12x85-g-2288289",
     "matched_name": "ROYAL CANIN Nassfutter Katze, Senior Ageing 11+, Sauce 12x85 g",
     "last_price": 14.02,
-    "last_checked": "2026-08-06T09:36:20.956146+00:00",
+    "last_checked": "2026-08-06T12:15:52.391915+00:00",
     "baseline_price": 14.4,
     "baseline_unit_price": 1.2,
     "last_alert_price": 14.02
