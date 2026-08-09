@@ -3,7 +3,7 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-instinctive-adult-in-sosse-12x85-g-1099135",
     "matched_name": "ROYAL CANIN Instinctive Adult in Soße 12x85 g",
     "last_price": 13.17,
-    "last_checked": "2026-08-09T18:59:14.061735+00:00",
+    "last_checked": "2026-08-09T21:49:07.375355+00:00",
     "baseline_price": 15.49,
     "multipacks": {
       "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464": {
@@ -20,7 +20,7 @@
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_adult/113463?activeVariant=113463.15",
     "matched_name": "Royal Canin Instinctive in Soße",
     "last_price": 15.49,
-    "last_checked": "2026-08-09T18:51:07.337831+00:00",
+    "last_checked": "2026-08-09T21:39:05.797717+00:00",
     "baseline_price": 15.49,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.11": {
@@ -72,7 +72,7 @@
     "matched_url": "https://www.zooroyal.de/p/royal-canin-instinctive-katzenfutter-nass-in-sosse-12x85g/1000076857/",
     "matched_name": "ROYAL CANIN INSTINCTIVE Katzenfutter nass in Soße - 12x85g",
     "last_price": 15.49,
-    "last_checked": "2026-08-09T18:51:31.268085+00:00",
+    "last_checked": "2026-08-09T21:39:38.345310+00:00",
     "baseline_price": 76.8,
     "baseline_unit_price": 6.3999999999999995
   },
@@ -81,7 +81,7 @@
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1922419?activeVariant=1922419.0",
     "matched_name": "Sparpaket Feringa Classic Meat Menü 12 x 400 g",
     "last_price": 18.69,
-    "last_checked": "2026-08-09T18:59:14.061735+00:00",
+    "last_checked": "2026-08-09T21:49:07.375355+00:00",
     "baseline_price": 21.96,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.9": {
@@ -271,7 +271,7 @@
   "feringa-classic-meat-men|24x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1244114?activeVariant=1244114.5",
     "matched_name": "Sparpaket Feringa Classic Meat Menü 24 x 400 g",
-    "last_checked": "2026-08-09T18:59:14.061735+00:00",
+    "last_checked": "2026-08-09T21:49:07.375355+00:00",
     "alternatives": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/saison_menu/1408319?activeVariant=1408319.1": {
         "baseline_price": 49.96,
@@ -487,13 +487,13 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-instinctive-7-12x85-g-1101464/",
     "matched_name": "ROYAL CANIN Instinctive 7+ 12x85 g",
     "last_price": 15.29,
-    "last_checked": "2026-08-09T18:55:32.130180+00:00",
+    "last_checked": "2026-08-09T21:44:21.677683+00:00",
     "baseline_price": 15.99,
     "baseline_unit_price": 1.3325
   },
   "royal-canin-instinctive-7-in-so-e|12x85g|zooplus": {
     "last_price": 15.29,
-    "last_checked": "2026-08-09T15:45:20.312245+00:00",
+    "last_checked": "2026-08-09T21:44:48.895569+00:00",
     "baseline_price": 15.29,
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.11": {
@@ -539,13 +539,15 @@
         "last_price": 123.92
       }
     },
-    "last_alert_price": 12.23
+    "last_alert_price": 12.23,
+    "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/113466?activeVariant=113466.10",
+    "matched_name": "Royal Canin Instinctive +7 in Soße"
   },
   "royal-canin-instinctive-7-in-so-e|12x85g|zooroyal": {
     "matched_url": "https://www.zooroyal.de/p/royal-canin-instinctive-7-nassfutter-in-sosse-fuer-aeltere-katzen-12x85g/1000076863/",
     "matched_name": "ROYAL CANIN INSTINCTIVE 7+ Nassfutter in Soße für ältere Katzen - 12x85g",
     "last_price": 15.69,
-    "last_checked": "2026-08-09T18:56:17.208768+00:00",
+    "last_checked": "2026-08-09T21:45:41.644112+00:00",
     "baseline_price": 15.69,
     "baseline_unit_price": 1.3075
   },
@@ -553,7 +555,7 @@
   "cosma-asia-in-jelly|12x400g|zooplus": {
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303003?activeVariant=303003.21",
     "matched_name": "Sparpaket Cosma Asia in Jelly 12 x 400 g",
-    "last_checked": "2026-08-09T18:57:54.993961+00:00",
+    "last_checked": "2026-08-09T21:47:40.797920+00:00",
     "multipacks": {
       "https://www.zooplus.de/shop/katzen/katzenfutter_dose/cosma/cosma_thai/303001?activeVariant=303001.23": {
         "baseline_price": 16.99,
@@ -625,10 +627,10 @@
   },
   "cosma-asia-in-jelly|12x400g|zooroyal": {},
   "premiere-meati-nassfutter-hund|6x800g|fressnapf": {
-    "matched_url": "https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-kalb-6x800-g-1210277",
-    "matched_name": "PREMIERE Meati Nassfutter Hund, Adult, Kalb 6x800 g",
+    "matched_url": "https://www.fressnapf.de/p/premiere-meati-nassfutter-hund-adult-huehnerherzen-6x800-g-1210274",
+    "matched_name": "PREMIERE Meati Nassfutter Hund, Adult, Hühnerherzen 6x800 g",
     "last_price": 11.34,
-    "last_checked": "2026-08-09T18:59:14.061735+00:00",
+    "last_checked": "2026-08-09T21:49:07.375355+00:00",
     "baseline_price": 12.48,
     "last_alert_price": 11.34
   },
@@ -642,7 +644,7 @@
     "matched_url": "https://www.fressnapf.de/p/premiere-excellent-xl-klumpstreu-katze-12-kg-1237777",
     "matched_name": "PREMIERE Excellent XL Klumpstreu Katze 12 kg",
     "last_price": 14.99,
-    "last_checked": "2026-08-09T18:58:48.109936+00:00",
+    "last_checked": "2026-08-09T21:48:38.076346+00:00",
     "baseline_price": 14.99
   },
   "premiere-excellent-klumpstreu-katze-12-kg|12kg|zooplus": {},
@@ -660,7 +662,7 @@
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/feringa/feringa_duo_fleischmenues/1232912?activeVariant=1232912.9",
     "matched_name": "Feringa Classic Meat Menü 6 x 400 g",
     "last_price": 10.62,
-    "last_checked": "2026-08-09T18:54:03.028653+00:00",
+    "last_checked": "2026-08-09T21:42:44.293666+00:00",
     "baseline_price": 12.49,
     "baseline_unit_price": 1.8733333333333333,
     "alternatives": {
@@ -767,7 +769,7 @@
     "matched_url": "https://www.fressnapf.de/p/royal-canin-nassfutter-katze-senior-ageing-11-sauce-12x85-g-2288289",
     "matched_name": "ROYAL CANIN Nassfutter Katze, Senior Ageing 11+, Sauce 12x85 g",
     "last_price": 14.02,
-    "last_checked": "2026-08-09T18:59:14.061735+00:00",
+    "last_checked": "2026-08-09T21:49:07.375355+00:00",
     "baseline_price": 14.4,
     "baseline_unit_price": 1.2,
     "last_alert_price": 14.02
@@ -776,9 +778,7 @@
     "last_price": 16.49,
     "last_checked": "2026-08-09T18:54:39.648444+00:00",
     "baseline_price": 16.49,
-    "last_alert_price": 13.19,
-    "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/royal_canin_katzenfutter/royal_canin_mature/2424913?activeVariant=2424913.0",
-    "matched_name": "Royal Canin Ageing 11+ in Soße"
+    "last_alert_price": 13.19
   },
   "royal-canin-ageing-11-in-so-e|12x85g|zooroyal": {},
   "royal-canin-ageing-15-in-so-e|12x85g|fressnapf": {},
@@ -793,7 +793,7 @@
     "matched_url": "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-6x100g-pute-und-kartoffel-1338370",
     "matched_name": "animonda Integra Protect Nassfutter Katze, Adult, Sensitive 6x100g Pute und Kartoffel",
     "last_price": 7.79,
-    "last_checked": "2026-08-09T18:56:19.181804+00:00",
+    "last_checked": "2026-08-09T21:45:43.895227+00:00",
     "baseline_price": 7.79,
     "baseline_unit_price": 1.2983333333333333,
     "multipacks": {
@@ -848,7 +848,7 @@
   },
   "animonda-integra-protect-adult-sensitive|6x100g|zooplus": {
     "last_price": 7.79,
-    "last_checked": "2026-08-09T18:56:31.060137+00:00",
+    "last_checked": "2026-08-09T21:45:58.405198+00:00",
     "baseline_price": 7.79,
     "baseline_unit_price": 1.2983333333333333,
     "multipacks": {
@@ -961,7 +961,7 @@
   },
   "animonda-integra-protect-adult-sensitive|24x100g|zooplus": {
     "last_price": 29.49,
-    "last_checked": "2026-08-09T18:56:50.377418+00:00",
+    "last_checked": "2026-08-09T21:46:20.022733+00:00",
     "baseline_price": 29.49,
     "baseline_unit_price": 1.22875,
     "multipacks": {
@@ -1009,7 +1009,7 @@
     "matched_url": "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-24x85-g-1808860",
     "matched_name": "animonda Integra Protect Nassfutter Katze, Adult, Sensitive Pute 24x85 g",
     "last_price": 18.79,
-    "last_checked": "2026-08-09T18:57:00.075401+00:00",
+    "last_checked": "2026-08-09T21:46:33.363923+00:00",
     "baseline_price": 18.79,
     "baseline_unit_price": 0.7829166666666666,
     "multipacks": {
@@ -1031,7 +1031,7 @@
   },
   "animonda-integra-protect-adult-sensitive|24x85g|zooplus": {
     "last_price": 18.79,
-    "last_checked": "2026-08-09T18:57:07.432555+00:00",
+    "last_checked": "2026-08-09T21:46:41.265137+00:00",
     "baseline_price": 18.79,
     "baseline_unit_price": 0.7829166666666666,
     "multipacks": {
