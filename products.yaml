@@ -88,6 +88,8 @@ products:
       - fressnapf
       - zooplus
       - zooroyal
+    retailer_urls:
+      fressnapf: "https://www.fressnapf.de/p/premiere-carbon-control-multi-cat-klumpstreu-katze-12-l-1227765"
 
   # More examples:
   # - name: "Senior cat food"
