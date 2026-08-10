@@ -1072,63 +1072,27 @@
     "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903432?activeVariant=1903432.0",
     "matched_name": "animonda Integra Protect Adult Sensitive 24 x 85 g"
   },
-  "animonda-integra-protect-adult-sensitive|24x85g|zooroyal": {},
-  "animonda-integra-protect-adult-sensitive|12x85g|fressnapf": {
-    "multipacks": {
-      "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-huhn-8x85-g-1808094": {
-        "baseline_price": 6.29,
-        "baseline_unit_price": 0.78625,
-        "name": "animonda Integra Protect Nassfutter Katze, Adult, Sensitive Huhn 8x85 g",
-        "pack_label": "8x85g",
-        "last_price": 6.29
-      },
-      "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-8x85-g-1808086": {
-        "baseline_price": 6.29,
-        "baseline_unit_price": 0.78625,
-        "name": "animonda Integra Protect Nassfutter Katze, Adult, Sensitive Pute 8x85 g",
-        "pack_label": "8x85g",
-        "last_price": 6.29
-      }
-    }
+  "animonda-integra-protect-adult-sensitive|24x85g|zooroyal": {
+    "matched_url": "https://www.zooroyal.de/p/animonda-integra-protect-sensitive-adult-huhn-24x85g/1000103822/",
+    "matched_name": "animonda INTEGRA PROTECT Sensitive Adult Huhn - 24x85g",
+    "last_price": 18.79,
+    "baseline": 18.79,
+    "baseline_unit": "18.79/24",
+    "last_checked": "2026-08-10T14:56:06.342761+00:00"
   },
-  "animonda-integra-protect-adult-sensitive|12x85g|zooplus": {
-    "multipacks": {
-      "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903432?activeVariant=1903432.0": {
-        "baseline_price": 18.79,
-        "baseline_unit_price": 0.7829166666666666,
-        "name": "animonda Integra Protect Adult Sensitive 24 x 85 g",
-        "pack_label": "24x85g",
-        "last_price": 18.79
-      },
-      "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903432?activeVariant=1903432.1": {
-        "baseline_price": 18.79,
-        "baseline_unit_price": 0.7829166666666666,
-        "name": "animonda Integra Protect Adult Sensitive 24 x 85 g",
-        "pack_label": "24x85g",
-        "last_price": 18.79
-      },
-      "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903433?activeVariant=1903433.1": {
-        "baseline_price": 37.58,
-        "baseline_unit_price": 0.7829166666666666,
-        "name": "Sparpaket animonda Integra Protect Adult Sensitive 48 x 85 g Huhn",
-        "pack_label": "48x85g",
-        "last_price": 37.58
-      },
-      "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903433?activeVariant=1903433.0": {
-        "baseline_price": 37.58,
-        "baseline_unit_price": 0.7829166666666666,
-        "name": "Sparpaket animonda Integra Protect Adult Sensitive 48 x 85 g Pute",
-        "pack_label": "48x85g",
-        "last_price": 37.58
-      },
-      "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1959643?activeVariant=1959643.1": {
-        "baseline_price": 6.32,
-        "baseline_unit_price": 0.79,
-        "name": "animonda Integra Protect Adult Sensitive 8 x 85 g Pute",
-        "pack_label": "8x85g",
-        "last_price": 6.32
-      }
-    }
+  "animonda-integra-protect-adult-sensitive|8x85g|fressnapf": {
+    "matched_url": "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-8x85-g-1808086/",
+    "last_price": 6.29,
+    "baseline": 6.29,
+    "baseline_unit": "6.29/8",
+    "last_checked": "2026-08-10T14:56:06.342761+00:00"
   },
-  "animonda-integra-protect-adult-sensitive|12x85g|zooroyal": {}
+  "animonda-integra-protect-adult-sensitive|8x85g|zooplus": {
+    "matched_url": "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1959643?activeVariant=1959643.1",
+    "last_price": 6.32,
+    "baseline": 6.32,
+    "baseline_unit": "6.32/8",
+    "last_checked": "2026-08-10T14:56:06.342761+00:00"
+  },
+  "animonda-integra-protect-adult-sensitive|8x85g|zooroyal": {}
 }

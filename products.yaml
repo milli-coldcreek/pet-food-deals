@@ -59,11 +59,17 @@ products:
     search_query: "animonda Integra Protect Adult Sensitive"
     pack_size: "24x85g"
     target_price: 16.00
+    retailer_urls:
+      fressnapf: "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-24x85-g-1808860"
+      zooplus: "https://www.zooplus.de/shop/katzen/katzenfutter_dose/integra/sensitive/1903432?activeVariant=1903432.0"
+      zooroyal: "https://www.zooroyal.de/p/animonda-integra-protect-sensitive-adult-huhn-24x85g/1000103822/"
   - name: "animonda Integra Protect Adult Sensitive"
     pet: "Cats"
     search_query: "animonda Integra Protect Adult Sensitive"
-    pack_size: "12x85g"
-    target_price: 8.00
+    pack_size: "8x85g"
+    target_price: 5.50
+    retailer_urls:
+      fressnapf: "https://www.fressnapf.de/p/animonda-integra-protect-nassfutter-katze-adult-sensitive-pute-8x85-g-1808086/"
   - name: "Cosma Asia in Jelly"
     pet: "Cats"
     search_query: "Cosma Asia in Jelly"
