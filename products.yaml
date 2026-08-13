@@ -80,6 +80,9 @@ products:
     search_query: "PREMIERE Meati Nassfutter Hund"
     pack_size: "6x800g"
     target_price: 13.00
+    retailers:
+      - fressnapf
+      - zooroyal
   - name: "PREMIERE Excellent Klumpstreu Katze 12 kg"
     pet: "Cats"
     search_query: "PREMIERE Excellent Klumpstreu Katze 12 kg"

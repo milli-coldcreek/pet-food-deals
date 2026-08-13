@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 
 from src.models import ProductWatch
-from src.site import FRESH_DEAL_HOURS, build_board, render_html, write_site
+from src.site import FRESH_DEAL_HOURS, build_board, group_board, render_html, write_site
 
 
 def _fresh_iso(hours_ago: float = 0.5) -> str:
@@ -111,6 +111,44 @@ class SiteBoardTests(unittest.TestCase):
             write_site(out, products=products, state={})
             self.assertTrue(out.exists())
             self.assertIn("Test Food", out.read_text(encoding="utf-8"))
+
+    def test_groups_pack_sizes_under_one_product_name(self) -> None:
+        products = [
+            ProductWatch(
+                name="animonda Integra Protect Adult Sensitive",
+                search_query="animonda Integra Protect Adult Sensitive",
+                pack_size="8x85g",
+                pet="Cats",
+                target_price=5.5,
+                retailers=["fressnapf"],
+            ),
+            ProductWatch(
+                name="animonda Integra Protect Adult Sensitive",
+                search_query="animonda Integra Protect Adult Sensitive",
+                pack_size="24x85g",
+                pet="Cats",
+                target_price=16.0,
+                retailers=["zooplus"],
+            ),
+        ]
+        state = {
+            "animonda-integra-protect-adult-sensitive|8x85g|fressnapf": {
+                "last_price": 6.29,
+                "last_checked": _fresh_iso(),
+            },
+            "animonda-integra-protect-adult-sensitive|24x85g|zooplus": {
+                "last_price": 18.79,
+                "last_checked": _fresh_iso(),
+            },
+        }
+        rows = build_board(products, state)
+        groups = group_board(rows)
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(len(groups[0].packs), 2)
+        html = render_html(rows)
+        self.assertEqual(html.count("animonda Integra Protect Adult Sensitive"), 1)
+        self.assertIn("8x85g", html)
+        self.assertIn("24x85g", html)
 
 
 if __name__ == "__main__":

@@ -63,6 +63,17 @@ class ProductBoardRow:
         return min(prices) if prices else None
 
 
+@dataclass
+class ProductGroup:
+    pet: str
+    name: str
+    packs: List[ProductBoardRow]
+
+    @property
+    def has_deal(self) -> bool:
+        return any(pack.has_deal for pack in self.packs)
+
+
 def _parse_checked(value: str) -> Optional[datetime]:
     if not value:
         return None
@@ -155,6 +166,33 @@ def build_board(
     return rows
 
 
+def group_board(rows: List[ProductBoardRow]) -> List[ProductGroup]:
+    """Group pack-size rows under one product name (e.g. all animonda sizes)."""
+    groups: Dict[tuple[str, str], ProductGroup] = {}
+    order: List[tuple[str, str]] = []
+    for row in rows:
+        key = (row.pet, row.name)
+        if key not in groups:
+            groups[key] = ProductGroup(pet=row.pet, name=row.name, packs=[])
+            order.append(key)
+        groups[key].packs.append(row)
+
+    for group in groups.values():
+        group.packs.sort(
+            key=lambda pack: (0 if pack.has_deal else 1, pack.pack_size.lower())
+        )
+
+    result = [groups[key] for key in order]
+    result.sort(
+        key=lambda group: (
+            0 if group.has_deal else 1,
+            group.pet.lower(),
+            group.name.lower(),
+        )
+    )
+    return result
+
+
 def verify_deal_offers(
     state: Dict[str, Any],
     products: List[ProductWatch] | None = None,
@@ -219,71 +257,80 @@ def _fmt_checked(rows: List[ProductBoardRow]) -> str:
         return stamps[-1]
 
 
+def _render_offer(offer: RetailerPrice) -> str:
+    if offer.is_deal:
+        status = "deal"
+    elif offer.stale:
+        status = "stale"
+    elif offer.price is not None:
+        status = "ok"
+    else:
+        status = "miss"
+    label = offer.retailer.capitalize()
+    price_txt = _fmt_price(offer.price)
+    if offer.url:
+        price_html = (
+            f'<a class="price-link" href="{html.escape(offer.url)}" '
+            f'target="_blank" rel="noopener noreferrer">{price_txt}</a>'
+        )
+    else:
+        price_html = price_txt
+    if offer.is_deal:
+        badge = '<span class="badge">deal</span>'
+    elif offer.stale:
+        badge = '<span class="badge badge--stale">was deal</span>'
+    else:
+        badge = ""
+    age = offer.age_label
+    age_html = (
+        f'<span class="age" title="{html.escape(offer.last_checked)}">'
+        f"{html.escape(age)}</span>"
+        if age
+        else ""
+    )
+    return (
+        f'<div class="offer offer--{status}">'
+        f'<span class="shop">{html.escape(label)}</span>'
+        f'<span class="price">{price_html}{badge}{age_html}</span>'
+        f"</div>"
+    )
+
+
 def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime] = None) -> str:
     generated_at = generated_at or datetime.now(timezone.utc)
+    groups = group_board(rows)
     deal_count = sum(1 for row in rows if row.has_deal)
     checked = _fmt_checked(rows)
     generated = generated_at.astimezone().strftime("%d %b %Y, %H:%M %Z")
 
     sections: List[str] = []
     current_pet = None
-    for row in rows:
-        if row.pet != current_pet:
-            current_pet = row.pet
+    for group in groups:
+        if group.pet != current_pet:
+            current_pet = group.pet
             sections.append(f'<h2 class="pet">{html.escape(current_pet)}</h2>')
 
-        deal_class = " product--deal" if row.has_deal else ""
-        target = _fmt_price(row.target_price)
-        retailer_bits: List[str] = []
-        for offer in row.retailers:
-            if offer.is_deal:
-                status = "deal"
-            elif offer.stale:
-                status = "stale"
-            elif offer.price is not None:
-                status = "ok"
-            else:
-                status = "miss"
-            label = offer.retailer.capitalize()
-            price_txt = _fmt_price(offer.price)
-            if offer.url:
-                price_html = (
-                    f'<a class="price-link" href="{html.escape(offer.url)}" '
-                    f'target="_blank" rel="noopener noreferrer">{price_txt}</a>'
-                )
-            else:
-                price_html = price_txt
-            if offer.is_deal:
-                badge = '<span class="badge">deal</span>'
-            elif offer.stale:
-                badge = '<span class="badge badge--stale">was deal</span>'
-            else:
-                badge = ""
-            age = offer.age_label
-            age_html = (
-                f'<span class="age" title="{html.escape(offer.last_checked)}">'
-                f"{html.escape(age)}</span>"
-                if age
-                else ""
-            )
-            retailer_bits.append(
-                f'<div class="offer offer--{status}">'
-                f'<span class="shop">{html.escape(label)}</span>'
-                f'<span class="price">{price_html}{badge}{age_html}</span>'
+        deal_class = " product--deal" if group.has_deal else ""
+        pack_blocks: List[str] = []
+        for pack in group.packs:
+            target = _fmt_price(pack.target_price)
+            offers = "".join(_render_offer(offer) for offer in pack.retailers)
+            pack_deal = " pack--deal" if pack.has_deal else ""
+            pack_blocks.append(
+                f'<div class="pack{pack_deal}">'
+                f'<div class="pack__meta">'
+                f'<span class="pack__size">{html.escape(pack.pack_size)}</span>'
+                f'<span class="dot">·</span>'
+                f'<span>target {html.escape(target)}</span>'
+                f"</div>"
+                f'<div class="pack__offers">{offers}</div>'
                 f"</div>"
             )
 
         sections.append(
             f'<article class="product{deal_class}">'
-            f'<div class="product__main">'
-            f'<h3 class="product__name">{html.escape(row.name)}</h3>'
-            f'<p class="product__meta">'
-            f'<span>{html.escape(row.pack_size)}</span>'
-            f'<span class="dot">·</span>'
-            f'<span>target {html.escape(target)}</span>'
-            f"</p>"
-            f"</div>"
-            f'<div class="product__offers">{"".join(retailer_bits)}</div>'
+            f'<h3 class="product__name">{html.escape(group.name)}</h3>'
+            f'<div class="product__packs">{"".join(pack_blocks)}</div>'
             f"</article>"
         )
 
@@ -361,10 +408,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
       animation: rise 0.6s ease both;
     }}
     .product {{
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 1rem 1.5rem;
-      padding: 1rem 0;
+      padding: 1.1rem 0 1.25rem;
       border-top: 1px solid var(--line);
       animation: rise 0.55s ease both;
     }}
@@ -378,21 +422,38 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
       border-top-color: transparent;
     }}
     .product__name {{
-      margin: 0;
-      font-size: 1.05rem;
+      margin: 0 0 0.75rem;
+      font-size: 1.12rem;
       font-weight: 600;
       letter-spacing: -0.01em;
     }}
-    .product__meta {{
-      margin: 0.35rem 0 0;
+    .product__packs {{
+      display: grid;
+      gap: 0.85rem;
+    }}
+    .pack {{
+      display: grid;
+      grid-template-columns: minmax(9rem, 0.9fr) 1.2fr;
+      gap: 0.75rem 1.25rem;
+      padding: 0.55rem 0 0.15rem;
+      border-top: 1px dashed rgba(28, 42, 34, 0.1);
+    }}
+    .pack:first-child {{ border-top: none; padding-top: 0; }}
+    .pack__meta {{
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
+      padding-top: 0.1rem;
+    }}
+    .pack__size {{
+      color: var(--ink);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }}
     .dot {{ margin: 0 0.35rem; opacity: 0.6; }}
-    .product__offers {{
+    .pack__offers {{
       display: grid;
-      gap: 0.45rem;
-      align-content: center;
+      gap: 0.4rem;
+      align-content: start;
     }}
     .offer {{
       display: flex;
@@ -447,7 +508,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
       to {{ opacity: 1; transform: translateY(0); }}
     }}
     @media (max-width: 700px) {{
-      .product {{ grid-template-columns: 1fr; gap: 0.75rem; }}
+      .pack {{ grid-template-columns: 1fr; gap: 0.45rem; }}
       .wrap {{ padding-top: 1.75rem; }}
     }}
   </style>
@@ -456,7 +517,7 @@ def render_html(rows: List[ProductBoardRow], *, generated_at: Optional[datetime]
   <main class="wrap">
     <header class="hero">
       <h1 class="brand">Pet Food Deals</h1>
-      <p class="lede">Fresh prices for your watched products. Deal badges only show when the shop was checked within the last {FRESH_DEAL_HOURS} hours — Extra-Rabatt can end anytime.</p>
+      <p class="lede">Fresh prices for your watched products. Pack sizes are grouped under each product. Deal badges only show when the shop was checked within the last {FRESH_DEAL_HOURS} hours — Extra-Rabatt can end anytime.</p>
       <div class="stats">
         <span><strong>{deal_count}</strong> fresh deal{'s' if deal_count != 1 else ''}</span>
         <span>Last shop check: <strong>{html.escape(checked)}</strong></span>
@@ -505,8 +566,11 @@ def main() -> None:
     args = parser.parse_args()
     path = write_site(verify_deals=args.verify_deals)
     rows = build_board()
+    groups = group_board(rows)
     deals = sum(1 for row in rows if row.has_deal)
-    print(f"Wrote {path} ({len(rows)} products, {deals} fresh deals)")
+    print(
+        f"Wrote {path} ({len(groups)} products / {len(rows)} packs, {deals} fresh deals)"
+    )
 
 
 if __name__ == "__main__":
